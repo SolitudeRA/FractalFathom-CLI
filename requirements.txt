@@ -1,0 +1,4 @@
+flask==3.0.3
+torch==2.5.1
+transformers==4.46.1
+openai==1.54.3
