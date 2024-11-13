@@ -49,6 +49,52 @@ FractalFathom CLI is a Kotlin-based command-line tool designed to generate funct
 
 ## Usage
 
+### Annotation System
+
+The custom annotation system in FractalFathom enables precise tagging of classes, methods, and fields to specify functional roles, dependencies, and mappings to higher-level concepts. These annotations facilitate detailed feature recognition and business logic mapping in the analysis process.
+
+#### Key Components
+
+1. **Annotation Entities:** Define annotations applied to Java elements (classes, methods, fields) and specify properties like scope, activation phase, and dependencies.
+2. **Feature and Mapping Entities:** `FeatureEntity` denotes specific functionalities, while `MappingEntity` associates code elements with architectural concepts or business logic, enabling structured analysis.
+3. **Annotation Attributes and Contexts:** Provide metadata to specify properties and context, helping maintain consistency and interpretability in large codebases.
+
+#### Example Usage
+
+Below is an example of how to apply annotations in Java, demonstrating functionality identification and logical mapping.
+
+```java
+package org.example;
+
+import org.protogalaxy.fractalfathom.annotations.Feature;
+import org.protogalaxy.fractalfathom.annotations.Mapping;
+
+@Feature(name = "User Authentication", description = "Handles user login and session management", type = FeatureType.FUNCTIONAL)
+public class AuthService {
+
+    @Feature(name = "Encrypt Password", description = "Encrypts passwords using SHA-256", type = FeatureType.FUNCTIONAL)
+    @Mapping(toConcept = "Security")
+    private String encryptPassword(String password) {
+        // Password encryption logic here
+    }
+
+    @Feature(name = "Session Management", description = "Manages user sessions", type = FeatureType.FUNCTIONAL)
+    public void manageSession(User user) {
+        // Session management logic
+    }
+}
+```
+
+#### Explanation
+
+- **Class-Level Annotation:** `@Feature` on `AuthService` tags the entire class with the functionality of "User Authentication," aiding the system in identifying this as a key feature within the code.
+- **Method-Level Annotation:** `@Feature` on `encryptPassword` specifies the function's purpose. The `@Mapping` annotation links it to the "Security" concept, marking it as part of the security logic within the business context.
+- **Multi-Method Tagging:** Additional methods like `manageSession` are tagged as separate functionalities, allowing deep analysis of each component’s role within the class.
+
+These annotations, when processed, provide FractalFathom with a structured understanding of each component's role and interconnections, facilitating a clear and interactive visualization of complex systems in the generated PlantUML component diagrams.
+
+---
+
 ### Start the Server
 
 1. Run the Flask server:
