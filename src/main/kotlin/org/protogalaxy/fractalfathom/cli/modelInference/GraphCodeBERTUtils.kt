@@ -97,6 +97,9 @@ class GraphCodeBERTUtils {
     private fun IRClassEntity.toTextFormat(): String {
         val fieldsText = fields.joinToString(", ") { "${it.name}: ${it.type}" }
         val methodsText = methods.joinToString(", ") { it.toTextFormat() }
+        val featureText = features.joinToString(", ") { it.name }
+        val mappingText = mappings.joinToString(", ") { it.toConcept }
+        val annotationsText = annotations.joinToString(", ") { it.name }
 
         return """
             Class: $name
@@ -104,9 +107,9 @@ class GraphCodeBERTUtils {
             Package: $packageName
             Superclass: ${superClass ?: "None"}
             Interfaces: ${interfaces.joinToString(", ")}
-            Annotations: ${annotations.joinToString(", ") { it.name }}
-            Features: ${features.joinToString(", ") { it.name }}
-            Mappings: ${mappings.joinToString(", ") { it.toConcept }}
+            Annotations: $annotationsText
+            Features: $featureText
+            Mappings: $mappingText
             Fields: $fieldsText
             Methods: $methodsText
         """.trimIndent()

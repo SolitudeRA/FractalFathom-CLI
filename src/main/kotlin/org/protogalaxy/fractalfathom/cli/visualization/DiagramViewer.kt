@@ -8,7 +8,7 @@ class DiagramViewer {
     fun generateDiagramImage(plantUMLCode: String, outputImagePath: String) {
         val reader = SourceStringReader(plantUMLCode)
         FileOutputStream(outputImagePath).use { fos ->
-            reader.generateImage(fos)
+            reader.outputImage(fos)
         }
     }
 }

@@ -108,7 +108,7 @@ These annotations, when processed, provide FractalFathom with a structured under
 
 1. Run the FractalFathom CLI tool:
    ```bash
-   ./gradlew run --args='path/to/java/project'
+   ./gradlew run --args='path/to/java/project path/to/output/directory'
    ```
 
    The tool will automatically call server endpoints to generate enhanced IR data and PlantUML component diagram code through GraphCodeBERT and GPT-4 APIs.

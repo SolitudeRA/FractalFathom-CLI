@@ -6,6 +6,7 @@ fun main(args: Array<String>) {
         return
     }
     val projectPath = args[0]
-    val cli = FractalFathomCLI(projectPath)
+    val outputDir = args[1]
+    val cli = FractalFathomCLI(projectPath, outputDir)
     cli.run()
 }
