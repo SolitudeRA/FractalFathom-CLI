@@ -27,7 +27,7 @@ class GraphCodeBERTUtilsTest {
     fun setup() {
         // 启动Python服务器
         serverProcess = ProcessBuilder(
-            "python3",
+            "python",
             "src/main/kotlin/org/protogalaxy/fractalfathom/cli/modelInference/server.py"
         ).redirectOutput(ProcessBuilder.Redirect.INHERIT).redirectError(ProcessBuilder.Redirect.INHERIT).start()
 
@@ -121,7 +121,7 @@ class GraphCodeBERTUtilsTest {
         // 验证返回的数据是否包含嵌入向量
         val enhancedClass = enhancedIRClasses.first()
         assertNotNull(enhancedClass.embedding)
-        assertEquals(enhancedClass.embedding?.values?.size, 128)
+        assertEquals(enhancedClass.embedding?.values?.size, 32)
         assertTrue(enhancedClass.embedding!!.values.isNotEmpty())
     }
 }

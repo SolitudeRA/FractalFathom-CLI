@@ -67,7 +67,7 @@ class GraphCodeBERTUtils {
     }
 
     // Function to call the GraphCodeBERT API
-    private fun callGraphCodeBERTAPI(entities: List<Pair<String, String>>): Map<String, List<Float>> {
+    private fun callGraphCodeBERTAPI(entities: List<Pair<String, String>>): Map<String, List<Double>> {
         val jsonData = mapper.writeValueAsString(mapOf(
             "ir_entities" to entities.map { (id, code) -> mapOf("id" to id, "code_snippet" to code) }
         ))
@@ -84,12 +84,7 @@ class GraphCodeBERTUtils {
             val responseJson = response.body?.string() ?: throw Exception("Empty response body")
             val responseMap: Map<String, Map<String, List<Double>>> = mapper.readValue(responseJson)
 
-            // Convert Double to Float if necessary
-            val embeddingsMap = responseMap["embeddings"]?.mapValues { entry ->
-                entry.value.map { it.toFloat() }
-            } ?: emptyMap()
-
-            return embeddingsMap
+            return responseMap["embeddings"] ?: throw Exception("Invalid response format")
         }
     }
 

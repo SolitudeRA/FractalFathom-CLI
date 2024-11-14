@@ -71,7 +71,7 @@ class LLMUtilsDryTest {
                     features = emptyList(),
                     mappings = emptyList(),
                     sourceCodeLocation = SourceCodeLocation("src/TestClass.java", 1, 1, 1, 10),
-                    embedding = Embedding(values = floatArrayOf(1.0F, 2.0F, 3.0F).toList())
+                    embedding = Embedding(values = doubleArrayOf(1.0, 2.0, 3.0).toList())
                 )
             ),
             methods = listOf(
@@ -86,13 +86,13 @@ class LLMUtilsDryTest {
                     calledMethods = emptyList(),
                     lowLevelAST = null,
                     sourceCodeLocation = SourceCodeLocation("src/TestClass.java", 1, 1, 1, 10),
-                    embedding = Embedding(values = floatArrayOf(1.0F, 2.0F, 3.0F).toList())
+                    embedding = Embedding(values = doubleArrayOf(1.0, 2.0, 3.0).toList())
                 )
             ),
             relations = emptyList(),
             sourceCodeLocation = SourceCodeLocation("src/TestClass.java", 1, 10, 1, 1),
             complexityMetrics = ComplexityMetrics(cyclomaticComplexity = 1, nestingDepth = 1, branchCount = 0),
-            embedding = Embedding(values = floatArrayOf(1.0F, 2.0F, 3.0F).toList())
+            embedding = Embedding(values = doubleArrayOf(1.0, 2.0, 3.0).toList())
         )
 
         // 调用测试方法

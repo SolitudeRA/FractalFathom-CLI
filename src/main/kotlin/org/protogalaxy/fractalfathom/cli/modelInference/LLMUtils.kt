@@ -21,6 +21,9 @@ class LLMUtils {
     private val mapper = jacksonObjectMapper()
     private val endpointURL = "http://localhost:5000/generate_plantuml"
 
+    private val openaiApiKey = System.getenv("OPENAI_API_KEY")
+        ?: throw IllegalStateException("Environment variable OPENAI_API_KEY is not set")
+
     fun generatePlantUML(irClasses: List<IRClassEntity>): String = runBlocking {
         val prompt = constructPrompt(irClasses)
         val plantUMLCode = callGPT4API(prompt)
@@ -28,7 +31,12 @@ class LLMUtils {
     }
 
     private fun callGPT4API(prompt: String): String {
-        val jsonData = mapper.writeValueAsString(mapOf("prompt" to prompt))
+        val jsonData = mapper.writeValueAsString(
+            mapOf(
+                "prompt" to prompt,
+                "api_key" to openaiApiKey
+            )
+        )
         val requestBody = jsonData.toRequestBody("application/json".toMediaTypeOrNull())
 
         val request = Request.Builder()

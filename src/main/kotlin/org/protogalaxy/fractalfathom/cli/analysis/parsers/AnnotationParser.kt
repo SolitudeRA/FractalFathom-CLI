@@ -30,7 +30,7 @@ class AnnotationParser {
         }
 
         // 注解目标元素及类型
-        val targetElement = ctAnnotation.parent.toString()
+        val targetElement = ctAnnotation.parent?.toString() ?: "Unknown"
         val targetType = when (ctAnnotation.annotatedElementType) {
             CtAnnotatedElementType.TYPE -> AnnotationTargetType.CLASS
             CtAnnotatedElementType.FIELD -> AnnotationTargetType.FIELD
@@ -47,7 +47,7 @@ class AnnotationParser {
                 startColumn = it.column,
                 endColumn = it.endColumn
             )
-        }
+        } ?: SourceCodeLocation("", -1, -1, -1, -1)
 
         return AnnotationEntity(
             name = name,

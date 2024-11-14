@@ -2,8 +2,6 @@ from flask import Flask, request, jsonify
 from openai import OpenAI
 from transformers import RobertaTokenizer, RobertaModel
 import torch
-import openai
-import os
 
 app = Flask(__name__)
 
@@ -61,7 +59,7 @@ def generate_plantuml():
     prompt = data['prompt']
 
     client = OpenAI(
-        api_key=os.getenv('OPENAI_API_KEY'),
+        api_key=data['api_key'],
     )
 
     # Call the GPT-4 API
