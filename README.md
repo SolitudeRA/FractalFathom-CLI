@@ -30,7 +30,7 @@ FractalFathom CLI is a Kotlin-based command-line tool designed to generate funct
    ```
 
 2. **Set Environment Variables**:
-   Create a `.env` file and set the OpenAI API key.
+   Create the OpenAI API key in environment variables.
    ```plaintext
    OPENAI_API_KEY=your_openai_api_key_here
    ```
@@ -66,19 +66,19 @@ Below is an example of how to apply annotations in Java, demonstrating functiona
 ```java
 package org.example;
 
-import org.protogalaxy.fractalfathom.annotations.Feature;
-import org.protogalaxy.fractalfathom.annotations.Mapping;
+import org.protogalaxy.fractalfathom.FractalFathomFeature;
+import org.protogalaxy.fractalfathom.FractalFathomMapping;
 
-@Feature(name = "User Authentication", description = "Handles user login and session management", type = FeatureType.FUNCTIONAL)
+@FractalFathomFeature(name = "User Authentication", description = "Handles user login and session management", type = FeatureType.FUNCTIONAL)
 public class AuthService {
 
-    @Feature(name = "Encrypt Password", description = "Encrypts passwords using SHA-256", type = FeatureType.FUNCTIONAL)
-    @Mapping(toConcept = "Security")
+    @FractalFathomFeature(name = "Encrypt Password", description = "Encrypts passwords using SHA-256", type = FeatureType.FUNCTIONAL)
+    @FractalFathomMapping(toConcept = "Security")
     private String encryptPassword(String password) {
         // Password encryption logic here
     }
 
-    @Feature(name = "Session Management", description = "Manages user sessions", type = FeatureType.FUNCTIONAL)
+    @FractalFathomFeature(name = "Session Management", description = "Manages user sessions", type = FeatureType.FUNCTIONAL)
     public void manageSession(User user) {
         // Session management logic
     }
