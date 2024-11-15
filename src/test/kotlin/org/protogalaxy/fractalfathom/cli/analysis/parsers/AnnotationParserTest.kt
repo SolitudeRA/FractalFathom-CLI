@@ -15,8 +15,8 @@ class AnnotationParserTest : BaseTest() {
 
         assertEquals(2, annotationEntities.size, "Expected 2 annotations")
 
-        val featureAnnotation = annotationEntities.find { it.name == "org.protogalaxy.fractalfathom.cli.resources.annotations.Feature" }
-        val mappingAnnotation = annotationEntities.find { it.name == "org.protogalaxy.fractalfathom.cli.resources.annotations.Mapping" }
+        val featureAnnotation = annotationEntities.find { it.name == "org.protogalaxy.fractalfathom.FractalFathomFeature" }
+        val mappingAnnotation = annotationEntities.find { it.name == "org.protogalaxy.fractalfathom.FractalFathomMapping" }
 
         assertNotNull(featureAnnotation, "Feature annotation should not be null")
         assertNotNull(mappingAnnotation, "Mapping annotation should not be null")

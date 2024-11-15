@@ -24,13 +24,17 @@ def generate_embeddings():
 
     for entity in ir_entities:
         entity_id = entity['id']
-        code_snippet = entity['code_snippet']
+        code_snippet = entity['code_snippet']  # Already merged with context on the Kotlin side
         embedding = get_embedding(code_snippet)
         embeddings[entity_id] = reduce_embedding(embedding)
 
     return jsonify({'embeddings': embeddings})
 
+
 def get_embedding(code_snippet, embedding_size=32):
+    """
+    Generate embeddings for the code snippet.
+    """
     inputs = tokenizer(code_snippet, return_tensors='pt', truncation=True, max_length=512)
     outputs = model(**inputs)
     last_hidden_states = outputs.last_hidden_state
@@ -40,8 +44,11 @@ def get_embedding(code_snippet, embedding_size=32):
     reduced_embedding = embedding[:embedding_size]
     return reduced_embedding
 
+
 def reduce_embedding(embedding, target_dim=32):
-    # Reduce the embedding dimension to balance size and performance
+    """
+    Reduce the embedding dimension to balance size and performance.
+    """
     return embedding[:target_dim]
 
 """

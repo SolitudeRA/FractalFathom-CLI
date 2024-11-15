@@ -60,17 +60,23 @@ class LLMUtils {
 
         promptBuilder.append(
             """
-            1. The diagram should accurately represent the Java classes, methods, fields, and their relationships (inheritance, implementation, dependency).
-            2. Clearly show the functional hierarchy, grouping components according to their features and mappings.
-            3. Display annotations and labels for key functional features and business logic mappings.
-            4. Ensure the diagram is clear, well-structured, and suitable for rendering and understanding.
-            5. Use appropriate PlantUML syntax, so that the output can be directly rendered.
-            6. The diagram should be suitable for inclusion in IntelliJ IDEA's PlantUML plugin, and support users clicking components to navigate to code.
-            7. Simplify the diagram if necessary to avoid excessive complexity, while ensuring key components and relationships are shown.
+            1. Use `class` notation to represent Java classes, including their fields and methods. Each class should include:
+                - Public fields, displayed with a `+` sign and followed by the field type and name in the format `+ fieldName: Type`.
+                - Public methods, displayed with a `+` sign and followed by the method name, parameters, and return type in the format `+ methodName(param: Type): ReturnType`.
+
+            2. Use `package` notation to group related classes. For example, place all classes related to "User Management" in a package labeled "User Management".
+            3. Show relationships between classes, including:
+                - Dependency relationships using arrows, e.g., `ClassA --> ClassB : relationship`.
+                - If a class uses another class, display it as a `uses` relationship.
+                - If a class manages another class, display it as a `manages` relationship.
+            4. Omit complex details like embeddings and annotation-specific classes, and avoid displaying annotation fields or lifecycle phases directly. Focus only on functional relationships and hierarchies.
+            5. Use simple PlantUML syntax that is compatible with IntelliJ IDEA's PlantUML plugin to ensure the code can be rendered without syntax errors.
+            6. Avoid using `component` for individual classes with fields and methods. Instead, use `component` only for abstract modules or services without internal structure details. For concrete classes, always use `class` notation.
+            7. Ensure all packages, classes, fields, and relationships are formatted correctly according to PlantUML standards, without any syntax errors.
             """.trimIndent()
         )
 
-        promptBuilder.append("\nCode Structure Data:\n")
+        promptBuilder.append("\nHere is the code structure data:\n")
 
         for (irClass in irClasses) {
             val classInfo = StringBuilder().apply {
@@ -87,7 +93,7 @@ class LLMUtils {
             promptBuilder.append(classInfo).append("\n")
         }
 
-        promptBuilder.append("\nPlease generate the PlantUML component diagram code accordingly.")
+        promptBuilder.append("\nOutput only the PlantUML component diagram code, without any additional text.")
         return promptBuilder.toString()
     }
 
@@ -126,7 +132,7 @@ class LLMUtils {
 
     private fun StringBuilder.appendDetails(features: List<String>, mappings: List<String>, embeddings: List<Float>? = null) {
         if (features.isNotEmpty() || mappings.isNotEmpty() || (embeddings?.isNotEmpty() == true)) {
-            append("  Details:\n")
+            append("    Details:\n")
             if (features.isNotEmpty()) append("    Features: ${features.joinToString(", ")}\n")
             if (mappings.isNotEmpty()) append("    Mappings: ${mappings.joinToString(", ")}\n")
             embeddings?.let { append("    Embedding: ${it.joinToString(", ")}\n") }

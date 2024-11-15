@@ -27,7 +27,7 @@ class FieldParserTest : BaseTest() {
         assertNotNull(featureAnnotation, "Feature annotation should not be null")
 
         assertAll("Feature Annotation Properties",
-            { assertEquals("org.protogalaxy.fractalfathom.cli.resources.annotations.Feature", featureAnnotation?.name, "Annotation name should match") },
+            { assertEquals("org.protogalaxy.fractalfathom.FractalFathomFeature", featureAnnotation?.name, "Annotation name should match") },
             { assertEquals("userRepository", featureAnnotation?.attributes?.get("name"), "Annotation attribute 'name' should match") },
             { assertEquals("Repository for accessing user data", featureAnnotation?.attributes?.get("description"), "Annotation attribute 'description' should match") },
             { assertEquals("NON_FUNCTIONAL", featureAnnotation?.attributes?.get("type"), "Annotation attribute 'type' should match") }

@@ -1,7 +1,6 @@
 plugins {
     id("application")
     kotlin("jvm") version "2.0.21"
-    id("io.github.mictaege.spoon-gradle-plugin") version "2024.2"
 }
 
 group = "org.protogalaxy"
@@ -21,6 +20,20 @@ val slf4jVersion = "2.0.16"
 val junitVersion = "5.11.3"
 val mockkVersion = "1.13.13"
 
+// Separate source set for annotations
+sourceSets {
+    create("annotations") {
+        java.srcDir("src/annotations/java")
+    }
+}
+
+// Build task to create a separate JAR for annotations
+tasks.register<Jar>("buildLib") {
+    archiveClassifier.set("annotations")
+    from(sourceSets["annotations"].output)
+    destinationDirectory.set(layout.buildDirectory.dir("libs"))
+}
+
 // Run the application
 tasks.register<JavaExec>("runApp") {
     group = "application"
@@ -28,60 +41,39 @@ tasks.register<JavaExec>("runApp") {
     mainClass.set(application.mainClass.get())
     classpath = sourceSets.main.get().runtimeClasspath
     standardInput = System.`in`
-    dependsOn("startPythonServer")
-    finalizedBy("stopPythonServer")
+    dependsOn("startCodeInsightServer")
+    finalizedBy("stopCodeInsightServer")
 }
 
 // Task to start the Python server
-tasks.register<Exec>("startPythonServer") {
+tasks.register<Exec>("startCodeInsightServer") {
     group = "application"
-    description = "Starts the Python server script"
+    description = "Starts the code insight server script"
     commandLine("python", pythonScriptPath)
     isIgnoreExitValue = true
     doLast {
-        println("Python server script started.")
+        println("Code insight server started.")
     }
 }
 
 // Task to stop the Python server
-tasks.register("stopPythonServer") {
+tasks.register("stopCodeInsightServer") {
     group = "application"
-    description = "Stops the Python server script if it is running"
+    description = "Stops the code insight server script if it is running"
     doLast {
         try {
             exec {
                 commandLine("pkill", "-f", "python $pythonScriptPath")
             }
-            println("Python server script stopped.")
-        } catch (e: Exception) {
-            println("No running Python server process found.")
+            println("Code insight server script stopped.")
+        } catch (_: Exception) {
+            println("No running code insight server process found.")
         }
     }
 }
 
 // Path to the Python server script
 val pythonScriptPath = "${projectDir}/src/main/kotlin/org/protogalaxy/fractalfathom/cli/modelInference/server.py"
-
-// Create a fat jar
-tasks.register<Jar>("fatJar") {
-    group = "build"
-    description = "Assembles a jar archive containing the main classes and dependencies."
-    archiveClassifier.set("all")
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    manifest {
-        attributes["Main-Class"] = application.mainClass.get()
-    }
-    from(sourceSets.main.get().output)
-
-    // Add dependencies and exclude signature files
-    dependsOn(configurations.runtimeClasspath)
-    from({
-        configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }
-    }) {
-        exclude("META-INF/*.SF", "META-INF/*.RSA", "META-INF/*.DSA")
-    }
-}
 
 // Clean and build the project
 tasks.register("cleanBuild") {

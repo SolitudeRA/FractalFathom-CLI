@@ -23,8 +23,8 @@ class MethodParserTest : BaseTest() {
 
         // 验证 createUser 方法的注解
         assertEquals(2, createUserMethod?.annotations?.size, "Expected 2 annotations on createUser method")
-        val featureAnnotation = createUserMethod?.annotations?.find { it.name == "org.protogalaxy.fractalfathom.cli.resources.annotations.Feature" }
-        val mappingAnnotation = createUserMethod?.annotations?.find { it.name == "org.protogalaxy.fractalfathom.cli.resources.annotations.Mapping" }
+        val featureAnnotation = createUserMethod?.annotations?.find { it.name == "org.protogalaxy.fractalfathom.FractalFathomFeature" }
+        val mappingAnnotation = createUserMethod?.annotations?.find { it.name == "org.protogalaxy.fractalfathom.FractalFathomMapping" }
 
         assertNotNull(featureAnnotation, "Feature annotation should not be null on createUser method")
         assertNotNull(mappingAnnotation, "Mapping annotation should not be null on createUser method")
