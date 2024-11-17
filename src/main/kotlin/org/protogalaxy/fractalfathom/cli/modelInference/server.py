@@ -18,6 +18,16 @@ Generate embeddings for code snippets using GraphCodeBERT.
 """
 @app.route('/generate_embeddings', methods=['POST'])
 def generate_embeddings():
+    """
+    Generate an embedding vector for a single code snippet.
+
+    Parameters:
+        - code_snippet (str): The code snippet to embed.
+        - embedding_size (int): Desired size of the embedding vector.
+
+    Returns:
+        - List[float]: The reduced embedding vector.
+    """
     data = request.get_json()
     ir_entities = data['ir_entities']  # Expected format: {'ir_entities': [{'id': 'entity_id', 'code_snippet': '...'}, ...]}
     embeddings = {}
@@ -33,7 +43,14 @@ def generate_embeddings():
 
 def get_embedding(code_snippet, embedding_size=32):
     """
-    Generate embeddings for the code snippet.
+    Generate an embedding vector for a single code snippet.
+
+    Parameters:
+        - code_snippet (str): The code snippet to embed.
+        - embedding_size (int): Desired size of the embedding vector.
+
+    Returns:
+        - List[float]: The reduced embedding vector.
     """
     inputs = tokenizer(code_snippet, return_tensors='pt', truncation=True, max_length=512)
     outputs = model(**inputs)
@@ -60,6 +77,20 @@ Generate PlantUML component diagram code based on code structure data and requir
 """
 @app.route('/generate_plantuml', methods=['POST'])
 def generate_plantuml():
+    """
+    Endpoint to generate PlantUML code for component diagrams using GPT-4.
+
+    Expects JSON data in the format:
+    {
+        'prompt': '...',
+        'api_key': '...'
+    }
+
+    Returns:
+    {
+        'plantuml_code': '...'
+    }
+    """
     data = request.get_json()
 
     # Prepare the prompt for GPT-4
