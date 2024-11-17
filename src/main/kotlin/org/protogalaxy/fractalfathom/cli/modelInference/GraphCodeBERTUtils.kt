@@ -1,6 +1,6 @@
 package org.protogalaxy.fractalfathom.cli.modelInference
 
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import okhttp3.*
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -14,26 +14,34 @@ import org.protogalaxy.fractalfathom.cli.analysis.ir.IRClassEntity
 import org.protogalaxy.fractalfathom.cli.analysis.ir.IRFieldEntity
 import org.protogalaxy.fractalfathom.cli.analysis.ir.IRMethodEntity
 
+/**
+ * A utility class to enhance IR data with embeddings generated via the GraphCodeBERT API.
+ */
 class GraphCodeBERTUtils {
 
-    private val client = OkHttpClient()
-    private val mapper = jacksonObjectMapper()
-    private val endpointURL = "http://localhost:5000/generate_embeddings"
+    private val client = OkHttpClient() // HTTP client for API calls
+    private val mapper = jacksonObjectMapper() // JSON serializer/deserializer
+    private val endpointURL = "http://localhost:5000/generate_embeddings" // API endpoint URL
+    private val batchSize = 10 // Number of entities processed per batch
 
-
-    // Function to enhance IR data with embeddings
+    /**
+     * Enhance IR data by generating embeddings for classes, fields, and methods.
+     *
+     * @param irClasses List of IRClassEntity to enhance.
+     * @return List of IRClassEntity with embedded data.
+     */
     fun enhanceIRDataWithEmbeddings(irClasses: List<IRClassEntity>): List<IRClassEntity> = runBlocking {
         irClasses.map { irClass ->
-            // Prepare code snippets for the class, fields, and methods
+            // Prepare a list of entities (class, fields, methods) with their associated code snippets
             val entityList = mutableListOf<Pair<String, String>>()
 
-            // Add class
+            // Add class-level entities
             val classId = "class_${irClass.name}"
             val classText = irClass.toTextFormat()
             val classContext = generateClassContext(irClass)
             entityList.add(classId to mergeSnippetWithContext(classText, classContext))
 
-            // Add fields
+            // Add field-level entities
             irClass.fields.forEach { field ->
                 val fieldId = "field_${irClass.name}_${field.name}"
                 val fieldText = "${field.name}: ${field.type}"
@@ -41,7 +49,7 @@ class GraphCodeBERTUtils {
                 entityList.add(fieldId to mergeSnippetWithContext(fieldText, fieldContext))
             }
 
-            // Add methods
+            // Add method-level entities
             irClass.methods.forEach { method ->
                 val methodId = "method_${irClass.name}_${method.name}"
                 val methodText = method.toTextFormat()
@@ -49,22 +57,24 @@ class GraphCodeBERTUtils {
                 entityList.add(methodId to mergeSnippetWithContext(methodText, methodContext))
             }
 
-            // Call the API
-            val embeddingsMap = callGraphCodeBERTAPI(entityList)
+            // Call the GraphCodeBERT API in batches to generate embeddings
+            val embeddingsMap = callGraphCodeBERTAPIInBatches(entityList)
 
-            // Embed the embeddings into IR structures
+            // Update fields with embeddings
             val enhancedFields = irClass.fields.map { field ->
                 val fieldId = "field_${irClass.name}_${field.name}"
                 val embeddingValues = embeddingsMap[fieldId] ?: emptyList()
                 field.copy(embedding = Embedding(embeddingValues))
             }
 
+            // Update methods with embeddings
             val enhancedMethods = irClass.methods.map { method ->
                 val methodId = "method_${irClass.name}_${method.name}"
                 val embeddingValues = embeddingsMap[methodId] ?: emptyList()
                 method.copy(embedding = Embedding(embeddingValues))
             }
 
+            // Update class with embeddings
             val classEmbeddingValues = embeddingsMap[classId] ?: emptyList()
             irClass.copy(
                 fields = enhancedFields,
@@ -74,11 +84,39 @@ class GraphCodeBERTUtils {
         }
     }
 
-    // Function to call the GraphCodeBERT API
-    private fun callGraphCodeBERTAPI(entities: List<Pair<String, String>>): Map<String, List<Double>> {
+    /**
+     * Perform concurrent and batched calls to the GraphCodeBERT API to generate embeddings.
+     *
+     * @param entities List of entities with IDs and code snippets.
+     * @return Map of entity IDs to their embedding vectors.
+     */
+    private suspend fun callGraphCodeBERTAPIInBatches(entities: List<Pair<String, String>>): Map<String, List<Double>> {
+        val entityBatches = entities.chunked(batchSize) // Split entities into batches
+
+        return coroutineScope {
+            val deferredResults = entityBatches.map { batch ->
+                async {
+                    callGraphCodeBERTAPIBatch(batch)
+                }
+            }
+
+            // Wait for all API calls to complete and merge their results
+            deferredResults.awaitAll()
+                .flatMap { it.entries }
+                .associate { it.key to it.value }
+        }
+    }
+
+    /**
+     * Make a single batch API call to generate embeddings.
+     *
+     * @param batch A batch of entities with IDs and code snippets.
+     * @return Map of entity IDs to their embedding vectors.
+     */
+    private fun callGraphCodeBERTAPIBatch(batch: List<Pair<String, String>>): Map<String, List<Double>> {
         val jsonData = mapper.writeValueAsString(
             mapOf(
-                "ir_entities" to entities.map { (id, code) ->
+                "ir_entities" to batch.map { (id, code) ->
                     mapOf(
                         "id" to id,
                         "code_snippet" to code
@@ -103,24 +141,41 @@ class GraphCodeBERTUtils {
         }
     }
 
-    // Function to merge code snippet with context
+    /**
+     * Merge a code snippet with its context for better semantic understanding.
+     *
+     * @param snippet The code snippet.
+     * @param context The context information.
+     * @return The combined snippet with context.
+     */
     private fun mergeSnippetWithContext(snippet: String, context: String): String {
         val contextHeader = "// Context Information:\n"
         return "$contextHeader$context\n\n$snippet"
     }
 
+    // Generate the context for a class entity
     private fun generateClassContext(irClass: IRClassEntity): String {
         return generateEntityContext(irClass.annotations, irClass.features, irClass.mappings)
     }
 
+    // Generate the context for a field entity
     private fun generateFieldContext(field: IRFieldEntity): String {
         return generateEntityContext(field.annotations, field.features, field.mappings)
     }
 
+    // Generate the context for a method entity
     private fun generateMethodContext(method: IRMethodEntity): String {
         return generateEntityContext(method.annotations, method.features, method.mappings)
     }
 
+    /**
+     * Generate context information from annotations, features, and mappings.
+     *
+     * @param annotations List of annotations.
+     * @param features List of features.
+     * @param mappings List of mappings.
+     * @return Context information as a string.
+     */
     private fun generateEntityContext(annotations: List<AnnotationEntity>, features: List<FeatureEntity>, mappings: List<MappingEntity>): String {
         return buildString {
             append("Annotations: ${annotations.joinToString(", ") { it.name }}\n")
@@ -151,6 +206,7 @@ class GraphCodeBERTUtils {
         """.trimIndent()
     }
 
+    // Extension function to convert IRMethodEntity to text format
     private fun IRMethodEntity.toTextFormat(): String {
         val paramsText = parameters.joinToString(", ") { "${it.name}: ${it.type}" }
         val featureText = features.joinToString(", ") { "${it.name}: ${it.description ?: "No description"}" }

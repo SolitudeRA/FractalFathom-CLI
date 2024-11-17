@@ -7,20 +7,25 @@ import org.protogalaxy.fractalfathom.cli.analysis.annotation.AnnotationTargetTyp
 import spoon.reflect.declaration.*
 
 /**
- * 注解解析器，解析注解信息。
+ * A parser for processing annotations in Java source code using Spoon.
+ *
+ * This class is responsible for converting Spoon's `CtAnnotation` representation
+ * into a custom `AnnotationEntity` object that includes metadata, attributes,
+ * and source code location information.
  */
 class AnnotationParser {
 
     /**
-     * 解析 CtAnnotation 对象，生成 AnnotationEntity。
+     * Parses a Spoon `CtAnnotation` object into a custom `AnnotationEntity`.
      *
-     * @param ctAnnotation Spoon 中的 CtAnnotation 对象。
-     * @return 解析得到的 AnnotationEntity。
+     * @param ctAnnotation The Spoon `CtAnnotation` object to be parsed.
+     * @return An `AnnotationEntity` object containing the parsed data.
      */
     fun parseAnnotation(ctAnnotation: CtAnnotation<*>): AnnotationEntity {
+        // Extract the fully qualified name of the annotation
         val name = ctAnnotation.annotationType.qualifiedName
 
-        // 解析属性
+        // Extract annotation attributes and process special cases
         val attributes = ctAnnotation.values.mapValues {
             if (it.key == "type") {
                 it.value.toString().replaceBeforeLast(".", "").removeSurrounding(".", "")
@@ -29,8 +34,8 @@ class AnnotationParser {
             }
         }
 
-        // 注解目标元素及类型
         val targetElement = ctAnnotation.parent?.toString() ?: "Unknown"
+        // Map Spoon's annotated element type to custom `AnnotationTargetType`
         val targetType = when (ctAnnotation.annotatedElementType) {
             CtAnnotatedElementType.TYPE -> AnnotationTargetType.CLASS
             CtAnnotatedElementType.FIELD -> AnnotationTargetType.FIELD
@@ -38,7 +43,7 @@ class AnnotationParser {
             else -> AnnotationTargetType.CLASS
         }
 
-        // 源码位置
+        // Extract source code location from the annotation's position in the source file
         val sourceCodeLocation = ctAnnotation.position?.let {
             SourceCodeLocation(
                 filePath = it.file?.path ?: "",
@@ -54,9 +59,9 @@ class AnnotationParser {
             attributes = attributes,
             targetElement = targetElement,
             targetType = targetType,
-            condition = null, // 激活条件待解析
-            dependencies = null, // 依赖的注解待解析
-            phase = AnnotationPhase.RUNTIME, // 生效阶段默认 RUNTIME
+            condition = null,
+            dependencies = null,
+            phase = AnnotationPhase.RUNTIME,
             sourceCodeLocation = sourceCodeLocation
         )
     }

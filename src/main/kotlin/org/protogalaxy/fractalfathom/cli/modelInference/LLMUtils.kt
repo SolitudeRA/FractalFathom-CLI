@@ -11,26 +11,45 @@ import org.protogalaxy.fractalfathom.cli.analysis.ir.IRFieldEntity
 import org.protogalaxy.fractalfathom.cli.analysis.ir.IRMethodEntity
 import java.util.concurrent.TimeUnit
 
+/**
+ * Utility class for interacting with GPT-4 API to generate PlantUML diagrams
+ * based on enhanced intermediate representation (IR) of Java code structures.
+ */
 class LLMUtils {
 
+    // Configure the HTTP client with extended timeouts to handle long API calls
     private val client = OkHttpClient.Builder()
         .connectTimeout(300, TimeUnit.SECONDS)
         .readTimeout(300, TimeUnit.SECONDS)
         .writeTimeout(300, TimeUnit.SECONDS)
         .build()
-    private val mapper = jacksonObjectMapper()
-    private val endpointURL = "http://localhost:5000/generate_plantuml"
+    private val mapper = jacksonObjectMapper() // JSON serializer/deserializer
+    private val endpointURL = "http://localhost:5000/generate_plantuml" // API endpoint
 
+    // Retrieve OpenAI API key from environment variables
     private val openaiApiKey = System.getenv("OPENAI_API_KEY")
         ?: throw IllegalStateException("Environment variable OPENAI_API_KEY is not set")
 
+    /**
+     * Generates PlantUML code for the given list of IRClassEntity objects.
+     *
+     * @param irClasses List of IRClassEntity containing code structure data.
+     * @return A String containing the generated PlantUML code.
+     */
     fun generatePlantUML(irClasses: List<IRClassEntity>): String = runBlocking {
         val prompt = constructPrompt(irClasses)
-        val plantUMLCode = callGPT4API(prompt)
+        val plantUMLCode = callOpenAIAPI(prompt)
         plantUMLCode
     }
 
-    private fun callGPT4API(prompt: String): String {
+    /**
+     * Sends the prompt to Open AI API and retrieves the PlantUML code.
+     *
+     * @param prompt The prompt string constructed from IR data.
+     * @return A String containing the generated PlantUML code.
+     * @throws Exception if the API response is invalid or an error occurs.
+     */
+    private fun callOpenAIAPI(prompt: String): String {
         val jsonData = mapper.writeValueAsString(
             mapOf(
                 "prompt" to prompt,
@@ -54,6 +73,12 @@ class LLMUtils {
         }
     }
 
+    /**
+     * Constructs a detailed prompt for GPT-4 based on the provided IR data.
+     *
+     * @param irClasses List of IRClassEntity objects to include in the prompt.
+     * @return A String containing the prompt formatted for GPT-4.
+     */
     fun constructPrompt(irClasses: List<IRClassEntity>): String {
         val promptBuilder = StringBuilder()
         promptBuilder.append("Based on the following code structure data, generate a PlantUML component diagram code that meets the following requirements:\n")
@@ -104,6 +129,9 @@ class LLMUtils {
         }
     }
 
+    /**
+     * Helper function to append field details to the prompt.
+     */
     private fun StringBuilder.appendFields(fields: List<IRFieldEntity>?) {
         fields?.takeIf { it.isNotEmpty() }?.let {
             append("Fields:\n")
@@ -116,6 +144,9 @@ class LLMUtils {
         }
     }
 
+    /**
+     * Helper function to append method details to the prompt.
+     */
     private fun StringBuilder.appendMethods(methods: List<IRMethodEntity>?) {
         methods?.takeIf { it.isNotEmpty() }?.let {
             append("Methods:\n")

@@ -6,21 +6,21 @@ import org.protogalaxy.fractalfathom.cli.analysis.staticCodeAnalysis.StaticParam
 import spoon.reflect.declaration.CtParameter
 
 /**
- * 参数解析器，解析方法参数信息。
+ * A parser for converting Spoon's `CtParameter` representation of a method parameter
+ * into a custom `StaticParameterEntity` representation.
  */
 class ParameterParser {
 
     /**
-     * 解析 CtParameter 对象，生成 StaticParameterEntity。
+     * Parses a Spoon `CtParameter` object into a custom `StaticParameterEntity`.
      *
-     * @param ctParameter Spoon 中的 CtParameter 对象。
-     * @return 解析得到的 StaticParameterEntity。
+     * @param ctParameter The Spoon `CtParameter` object representing a method parameter.
+     * @return A `StaticParameterEntity` containing the parameter's name, type, and source code location.
      */
     fun parseParameter(ctParameter: CtParameter<*>): StaticParameterEntity {
         val name = ctParameter.simpleName
         val type = ctParameter.type.qualifiedName
 
-        // 源码位置
         val sourceCodeLocation = ctParameter.position?.let {
             SourceCodeLocation(
                 filePath = it.file?.path ?: "",

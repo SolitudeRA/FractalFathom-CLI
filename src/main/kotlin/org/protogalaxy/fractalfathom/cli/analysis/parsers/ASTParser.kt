@@ -7,15 +7,19 @@ import spoon.reflect.code.CtStatement
 import spoon.reflect.declaration.CtExecutable
 
 /**
- * AST 解析器，解析方法体的低层 AST。
+ * A parser for analyzing and extracting low-level AST (Abstract Syntax Tree) information
+ * from Java executable elements (e.g., methods, constructors).
+ *
+ * This class processes Spoon's `CtExecutable` and its statements to generate
+ * a custom low-level AST representation, suitable for further analysis.
  */
 class ASTParser {
 
     /**
-     * 解析 CtExecutable 的方法体，生成 LowLevelAST。
+     * Parses the body of a given `CtExecutable` (e.g., a method or constructor) into a low-level AST.
      *
-     * @param ctExecutable Spoon 中的 CtExecutable 对象。
-     * @return 解析得到的 LowLevelAST。
+     * @param ctExecutable The Spoon `CtExecutable` object to parse.
+     * @return A `LowLevelAST` object containing the parsed statements, or `null` if the body is empty.
      */
     fun parseAST(ctExecutable: CtExecutable<*>): LowLevelAST? {
         val body = ctExecutable.body ?: return null
@@ -23,25 +27,25 @@ class ASTParser {
         return LowLevelAST(statements)
     }
 
-
     /**
-     * 递归解析 CtStatement，生成 StaticStatementEntity。
+     * Parses a single `CtStatement` into a custom `StaticStatementEntity`.
      *
-     * @param ctStatement Spoon 中的 CtStatement 对象。
-     * @return 解析得到的 StaticStatementEntity。
+     * This method handles different types of statements and recursively processes
+     * block statements (e.g., `{ ... }`).
+     *
+     * @param ctStatement The Spoon `CtStatement` to parse.
+     * @return A `StaticStatementEntity` representing the statement.
      */
     private fun parseStatement(ctStatement: CtStatement): StaticStatementEntity {
         val type = ctStatement.javaClass.simpleName
         val expression = ctStatement.toString()
 
-        // 解析子语句
         val subStatements = if (ctStatement is spoon.reflect.code.CtBlock<*>) {
             ctStatement.statements.map { parseStatement(it) }
         } else {
             null
         }
 
-        // 源码位置
         val sourceCodeLocation = ctStatement.position?.let {
             SourceCodeLocation(
                 filePath = it.file?.path ?: "",
