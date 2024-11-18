@@ -1,7 +1,9 @@
 package org.protogalaxy.fractalfathom.cli.modelInterface
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
+import org.junit.platform.commons.logging.LoggerFactory
 import org.protogalaxy.fractalfathom.cli.analysis.SourceCodeLocation
 import org.protogalaxy.fractalfathom.cli.analysis.annotation.AnnotationEntity
 import org.protogalaxy.fractalfathom.cli.analysis.annotation.AnnotationPhase
@@ -22,6 +24,9 @@ class GraphCodeBERTUtilsTest {
 
     private lateinit var graphCodeBERTUtils: GraphCodeBERTUtils
     private var serverProcess: Process? = null
+
+    private val mapper = jacksonObjectMapper() // JSON serializer/deserializer
+    private val logger = LoggerFactory.getLogger(GraphCodeBERTUtilsTest::class.java)
 
     @BeforeAll
     fun setup() {
@@ -117,6 +122,8 @@ class GraphCodeBERTUtilsTest {
 
         // 调用 GraphCodeBERTUtils 增强 IR 数据
         val enhancedIRClasses = graphCodeBERTUtils.enhanceIRDataWithEmbeddings(listOf(irClass))
+
+        logger.info { "Enhanced IR Classes: ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(enhancedIRClasses)}" }
 
         // 验证返回的数据是否包含嵌入向量
         val enhancedClass = enhancedIRClasses.first()

@@ -2,6 +2,7 @@ package org.protogalaxy.fractalfathom.cli.modelInterface
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.platform.commons.logging.LoggerFactory
 import org.protogalaxy.fractalfathom.cli.analysis.SourceCodeLocation
 import org.protogalaxy.fractalfathom.cli.analysis.annotation.AnnotationEntity
 import org.protogalaxy.fractalfathom.cli.analysis.annotation.AnnotationPhase
@@ -18,6 +19,7 @@ import org.protogalaxy.fractalfathom.cli.analysis.ir.IRMethodEntity
 import org.protogalaxy.fractalfathom.cli.modelInference.LLMUtils
 
 class LLMUtilsDryTest {
+    private val logger = LoggerFactory.getLogger(GraphCodeBERTUtilsTest::class.java)
 
     @Test
     fun testConstructPrompt() {
@@ -98,7 +100,7 @@ class LLMUtilsDryTest {
         // 调用测试方法
         val prompt = llmUtils.constructPrompt(listOf(irClass))
 
-        println(prompt)
+        logger.info { "Prompt: $prompt" }
 
         assertTrue(prompt.contains("Class: TestClass (Type: Class)"), "Class information is incorrect")
         assertTrue(prompt.contains("Features:\n- TestFeature"), "Features section is missing or incorrect")
