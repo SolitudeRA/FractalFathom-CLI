@@ -19,7 +19,7 @@ import org.protogalaxy.fractalfathom.cli.analysis.ir.IRMethodEntity
 import org.protogalaxy.fractalfathom.cli.modelInference.LLMUtils
 
 class LLMUtilsDryTest {
-    private val logger = LoggerFactory.getLogger(GraphCodeBERTUtilsTest::class.java)
+    private val logger = LoggerFactory.getLogger(LLMUtilsDryTest::class.java)
 
     @Test
     fun testConstructPrompt() {

@@ -34,59 +34,11 @@ tasks.register<Jar>("buildLib") {
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
 }
 
-// Run the application
-tasks.register<JavaExec>("runApp") {
-    group = "application"
-    description = "Run the application"
-    mainClass.set(application.mainClass.get())
-    classpath = sourceSets.main.get().runtimeClasspath
-    standardInput = System.`in`
-    dependsOn("startCodeInsightServer")
-    finalizedBy("stopCodeInsightServer")
-}
-
-// Task to start the Python server
-tasks.register<Exec>("startCodeInsightServer") {
-    group = "application"
-    description = "Starts the code insight server script"
-    commandLine("python", pythonScriptPath)
-    isIgnoreExitValue = true
-    doLast {
-        println("Code insight server started.")
-    }
-}
-
-// Task to stop the Python server
-tasks.register("stopCodeInsightServer") {
-    group = "application"
-    description = "Stops the code insight server script if it is running"
-    doLast {
-        try {
-            exec {
-                commandLine("pkill", "-f", "python $pythonScriptPath")
-            }
-            println("Code insight server script stopped.")
-        } catch (_: Exception) {
-            println("No running code insight server process found.")
-        }
-    }
-}
-
-// Path to the Python server script
-val pythonScriptPath = "${projectDir}/src/main/kotlin/org/protogalaxy/fractalfathom/cli/modelInference/server.py"
-
 // Clean and build the project
 tasks.register("cleanBuild") {
     group = "build"
     description = "Clean and build the project"
     dependsOn("clean", "build")
-}
-
-// Run all tests
-tasks.register("runTests") {
-    group = "verification"
-    description = "Run all tests"
-    dependsOn("test")
 }
 
 dependencies {

@@ -2,8 +2,7 @@ package org.protogalaxy.fractalfathom.cli.modelInterface
 
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
-import java.nio.file.Files
-import java.nio.file.Paths
+import org.junit.platform.commons.logging.LoggerFactory
 import org.protogalaxy.fractalfathom.cli.analysis.SourceCodeLocation
 import org.protogalaxy.fractalfathom.cli.analysis.ir.ComplexityMetrics
 import org.protogalaxy.fractalfathom.cli.analysis.ir.IRClassEntity
@@ -15,20 +14,15 @@ class LLMUtilsTest {
     private lateinit var llmUtils: LLMUtils
     private var serverProcess: Process? = null
 
+    private val logger = LoggerFactory.getLogger(LLMUtilsTest::class.java)
+
     @BeforeAll
     fun setup() {
-        val envFilePath = Paths.get(".env")
-        val envMap = Files.readAllLines(envFilePath).associate { line ->
-            val (key, value) = line.split("=")
-            key.trim() to value.trim()
-        }
-
         // 启动Python服务器
         serverProcess = ProcessBuilder(
             "python3",
             "src/main/kotlin/org/protogalaxy/fractalfathom/cli/modelInference/server.py"
         ).apply {
-            environment().putAll(envMap)
             redirectOutput(ProcessBuilder.Redirect.INHERIT)
             redirectError(ProcessBuilder.Redirect.INHERIT)
         }.start()
@@ -74,6 +68,6 @@ class LLMUtilsTest {
 
         // 检查返回的PlantUML代码
         assertNotNull(plantUMLCode, "生成的PlantUML代码不应为空")
-        println("Generated PlantUML code:\n$plantUMLCode")
+        logger.info { "Generated PlantUML code:\n$plantUMLCode" }
     }
 }
