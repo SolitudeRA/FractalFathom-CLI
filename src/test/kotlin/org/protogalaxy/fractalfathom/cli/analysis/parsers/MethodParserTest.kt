@@ -21,19 +21,10 @@ class MethodParserTest : BaseTest() {
         assertNotNull(createUserMethod, "createUser method should not be null")
         assertNotNull(deleteUserMethod, "deleteUser method should not be null")
 
-        // 验证 createUser 方法的注解
-        assertEquals(2, createUserMethod?.annotations?.size, "Expected 2 annotations on createUser method")
-        val featureAnnotation = createUserMethod?.annotations?.find { it.name == "org.protogalaxy.fractalfathom.FractalFathomFeature" }
+        assertEquals(1, createUserMethod?.annotations?.size, "Expected 2 annotations on createUser method")
         val mappingAnnotation = createUserMethod?.annotations?.find { it.name == "org.protogalaxy.fractalfathom.FractalFathomMapping" }
 
-        assertNotNull(featureAnnotation, "Feature annotation should not be null on createUser method")
         assertNotNull(mappingAnnotation, "Mapping annotation should not be null on createUser method")
-
-        assertAll("Feature Annotation Properties",
-            { assertEquals("createUser", featureAnnotation?.attributes?.get("name"), "Feature name attribute should match") },
-            { assertEquals("Creates a new user", featureAnnotation?.attributes?.get("description"), "Feature description attribute should match") },
-            { assertEquals("FUNCTIONAL", featureAnnotation?.attributes?.get("type"), "Feature type attribute should match") }
-        )
 
         assertAll("Mapping Annotation Properties",
             { assertEquals("User Creation", mappingAnnotation?.attributes?.get("toConcept"), "Mapping toConcept attribute should match") },

@@ -1,10 +1,15 @@
 package org.protogalaxy.fractalfathom.cli.analysis.parsers
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.platform.commons.logging.LoggerFactory
 import org.protogalaxy.fractalfathom.cli.analysis.BaseTest
 
 class FieldParserTest : BaseTest() {
+
+    private val logger = LoggerFactory.getLogger(FieldParserTest::class.java)
+    private val mapper = jacksonObjectMapper()
 
     @Test
     fun testParseFields() {
@@ -13,24 +18,23 @@ class FieldParserTest : BaseTest() {
         val fieldParser = FieldParser()
         val fieldEntities = fields.map { fieldParser.parseField(it) }
 
-        assertEquals(1, fieldEntities.size, "Expected 1 field in the class")
+        assertEquals(2, fieldEntities.size, "Expected 2 field in the class")
 
         val userRepositoryField = fieldEntities.find { it.name == "userRepository" }
 
+        logger.info { "User Repository Field: ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(userRepositoryField)}" }
+
         assertNotNull(userRepositoryField, "userRepository field should not be null")
-
         assertEquals("org.protogalaxy.fractalfathom.cli.resources.UserRepository", userRepositoryField?.type, "Field type should match")
-
-        // 验证字段上的注解
         assertEquals(1, userRepositoryField?.annotations?.size, "Expected 1 annotation on the field")
-        val featureAnnotation = userRepositoryField?.annotations?.first()
-        assertNotNull(featureAnnotation, "Feature annotation should not be null")
 
+        val featureAnnotation = userRepositoryField?.annotations?.first()
+
+        assertNotNull(featureAnnotation, "Feature annotation should not be null")
         assertAll("Feature Annotation Properties",
-            { assertEquals("org.protogalaxy.fractalfathom.FractalFathomFeature", featureAnnotation?.name, "Annotation name should match") },
-            { assertEquals("userRepository", featureAnnotation?.attributes?.get("name"), "Annotation attribute 'name' should match") },
-            { assertEquals("Repository for accessing user data", featureAnnotation?.attributes?.get("description"), "Annotation attribute 'description' should match") },
-            { assertEquals("NON_FUNCTIONAL", featureAnnotation?.attributes?.get("type"), "Annotation attribute 'type' should match") }
+            { assertEquals("org.protogalaxy.fractalfathom.FractalFathomMapping", featureAnnotation?.name, "Annotation name should match") },
+            { assertEquals("User Repository", featureAnnotation?.attributes?.get("toConcept")) },
+            { assertEquals("COMPONENT", featureAnnotation?.attributes?.get("type"))}
         )
     }
 }

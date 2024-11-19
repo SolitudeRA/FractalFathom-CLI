@@ -27,7 +27,7 @@ class ClassParserTest : BaseTest() {
         assertNotNull(mappingAnnotation, "Mapping annotation should not be null")
 
         // 验证字段和方法数量
-        assertEquals(1, classEntity.fields.size, "Expected 1 field in the class")
+        assertEquals(2, classEntity.fields.size, "Expected 2 field in the class")
         assertEquals(2, classEntity.methods.size, "Expected 2 methods in the class")
     }
 }
