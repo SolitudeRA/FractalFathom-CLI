@@ -1,6 +1,9 @@
 package org.protogalaxy.fractalfathom.cli.analysis.annotation
 
+/**
+ * Enum representing the type of a feature.
+ */
 enum class FeatureType {
-    FUNCTIONAL,        // 功能性特性
-    NON_FUNCTIONAL     // 非功能性特性
+    FUNCTIONAL,
+    NON_FUNCTIONAL
 }

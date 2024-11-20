@@ -2,7 +2,7 @@ package org.protogalaxy.fractalfathom.cli
 
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
-        println("请提供要分析的项目路径")
+        println("Please provide the path to the project to be analyzed")
         return
     }
     val projectPath = args[0]

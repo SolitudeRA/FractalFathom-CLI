@@ -1,9 +1,18 @@
 package org.protogalaxy.fractalfathom.cli.analysis.annotation
 
+/**
+ * Represents a feature entity with its properties and associated annotations.
+ *
+ * @property name The name of the feature.
+ * @property description Optional description of the feature.
+ * @property type The type of feature, indicating whether it is functional or non-functional.
+ * @property subFeatures Optional list of sub-features, allowing nested features.
+ * @property annotations List of annotations associated with the feature.
+ */
 data class FeatureEntity(
-    val name: String,                               // 功能特性名称
-    val description: String? = null,                // 功能特性描述（可选）
-    val type: FeatureType,                          // 功能特性类型，表示功能或非功能特性
-    val subFeatures: List<FeatureEntity>? = null,   // 子特性列表，支持嵌套特性
-    val annotations: List<AnnotationEntity>         // 关联的注解信息
+    val name: String,
+    val description: String? = null,
+    val type: FeatureType,
+    val subFeatures: List<FeatureEntity>? = null,
+    val annotations: List<AnnotationEntity>
 )

@@ -1,7 +1,14 @@
 package org.protogalaxy.fractalfathom.cli.analysis.annotation
 
-data class AnnotationLifecycle (
-    val isActive: Boolean,                          // 当前注解是否生效
-    val startCondition: String? = null,             // 启动条件
-    val endCondition: String? = null                // 结束条件
+/**
+ * Represents the lifecycle state of an annotation.
+ *
+ * @property isActive Indicates whether the annotation is currently active.
+ * @property startCondition Optional condition for activating the annotation.
+ * @property endCondition Optional condition for deactivating the annotation.
+ */
+data class AnnotationLifecycle(
+    val isActive: Boolean,
+    val startCondition: String? = null,
+    val endCondition: String? = null
 )

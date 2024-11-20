@@ -1,8 +1,16 @@
 package org.protogalaxy.fractalfathom.cli.analysis.annotation
 
+/**
+ * Represents a mapping entity to a higher-level concept or design pattern.
+ *
+ * @property toConcept The target high-level concept or design pattern being mapped to.
+ * @property type The type of mapping, defaulting to concept mapping.
+ * @property subMappings Optional list of sub-mappings, allowing nested mappings.
+ * @property annotations Optional list of annotations associated with this mapping.
+ */
 data class MappingEntity(
-    val toConcept: String,                          // 映射的目标高级概念或设计模式
-    val type: MappingType = MappingType.CONCEPT,    // 映射类型，默认为概念映射
-    val subMappings: List<MappingEntity>? = null,   // 子映射列表，支持嵌套映射
-    val annotations: List<AnnotationEntity>? = null // 关联的注解信息
+    val toConcept: String,
+    val type: MappingType = MappingType.CONCEPT,
+    val subMappings: List<MappingEntity>? = null,
+    val annotations: List<AnnotationEntity>? = null
 )

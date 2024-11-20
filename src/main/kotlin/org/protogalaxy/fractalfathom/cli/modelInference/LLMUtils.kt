@@ -85,19 +85,42 @@ class LLMUtils {
 
         promptBuilder.append(
             """
-            1. Use `class` notation to represent Java classes, including their fields and methods. Each class should include:
-                - Public fields, displayed with a `+` sign and followed by the field type and name in the format `+ fieldName: Type`.
-                - Public methods, displayed with a `+` sign and followed by the method name, parameters, and return type in the format `+ methodName(param: Type): ReturnType`.
+1. **Component Representation**:
+   - Use `component` to represent services (e.g., `UserService`, `RoleService`, `PermissionService`).
+   - Attach `<<stereotype>>` to each `component` (e.g., `<<service>>`, `<<repository>>`).
 
-            2. Use `package` notation to group related classes. For example, place all classes related to "User Management" in a package labeled "User Management".
-            3. Show relationships between classes, including:
-                - Dependency relationships using arrows, e.g., `ClassA --> ClassB : relationship`.
-                - If a class uses another class, display it as a `uses` relationship.
-                - If a class manages another class, display it as a `manages` relationship.
-            4. Omit complex details like embeddings and annotation-specific classes, and avoid displaying annotation fields or lifecycle phases directly. Focus only on functional relationships and hierarchies.
-            5. Use simple PlantUML syntax that is compatible with IntelliJ IDEA's PlantUML plugin to ensure the code can be rendered without syntax errors.
-            6. Avoid using `component` for individual classes with fields and methods. Instead, use `component` only for abstract modules or services without internal structure details. For concrete classes, always use `class` notation.
-            7. Ensure all packages, classes, fields, and relationships are formatted correctly according to PlantUML standards, without any syntax errors.
+2. **Interface Representation**:
+   - Use `interface` to define APIs or contracts between components (e.g., `IUserService`).
+   - Connect components to their interfaces using `..>` arrows (e.g., `[UserService] ..> [IUserService] : <<implements>>`).
+
+3. **Relationships**:
+   - Use arrows to represent relationships between components and their dependencies:
+     - `-->` for `uses` relationships.
+     - `..>` for `implements` relationships.
+   - Annotate arrows with specific method names or calls (e.g., `createUser(username, email)`).
+
+4. **Ports**:
+   - Use `port` elements only in the correct context:
+     - Syntax: `component [ComponentName] +[PortName]` is invalid in PlantUML.
+     - Instead, explicitly name ports as part of the interaction (e.g., `[UserService] --> [RoleService] : createUserPort`).
+
+5. **Grouping and Structure**:
+   - Use `package` to group related components and interfaces.
+   - Use `node` for deployable units and `database` for data repositories.
+
+6. **Annotations and Notes**:
+   - Add `note` annotations to clarify component purposes or interactions where necessary.
+
+7. **Visual Layout**:
+   - Use `skinparam` for styling:
+     ```
+     skinparam componentStyle rectangle
+     skinparam shadowing false
+     ```
+
+8. **Output Requirements**:
+   - Ensure the PlantUML code is syntactically correct and can be rendered without errors.
+   - Include only the PlantUML code without additional descriptive text.
             """.trimIndent()
         )
 

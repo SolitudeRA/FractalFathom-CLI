@@ -1,7 +1,10 @@
 package org.protogalaxy.fractalfathom.cli.analysis.annotation
 
+/**
+ * Enum representing the type of a mapping.
+ */
 enum class MappingType {
-    CONCEPT,           // 映射到高级功能概念
-    MODULE,            // 映射到模块
-    COMPONENT          // 映射到组件
+    CONCEPT,    // Maps to a high-level concept
+    MODULE,     // Maps to a module
+    COMPONENT   // Maps to a component
 }

@@ -2,13 +2,25 @@ package org.protogalaxy.fractalfathom.cli.analysis.annotation
 
 import org.protogalaxy.fractalfathom.cli.analysis.SourceCodeLocation
 
+/**
+ * Represents an annotation entity with its properties, target, and lifecycle details.
+ *
+ * @property name The name of the annotation.
+ * @property attributes A map containing the key-value pairs of annotation attributes.
+ * @property targetElement The name of the code element the annotation applies to (e.g., class name, method name, field name).
+ * @property targetType The type of the code element (e.g., CLASS, METHOD, FIELD).
+ * @property condition Optional condition that determines when the annotation is active.
+ * @property dependencies Optional list of dependent annotation names.
+ * @property phase The phase during which the annotation is effective (e.g., compile-time, runtime).
+ * @property sourceCodeLocation The location of the annotation in the source code, optional.
+ */
 data class AnnotationEntity(
-    val name: String,                               // 注解名称
-    val attributes: Map<String, Any>,               // 注解的属性键值对
-    val targetElement: String,                      // 注解作用的代码元素（类名、方法名、字段名）
-    val targetType: AnnotationTargetType,           // 注解作用的元素类型（CLASS, METHOD, FIELD）
-    val condition: String? = null,                  // 激活条件
-    val dependencies: List<String>? = null,         // 依赖的其他注解名称
-    val phase: AnnotationPhase,                     // 注解生效阶段（如编译期、运行期等）
-    val sourceCodeLocation: SourceCodeLocation? = null  // 注解的源码位置
+    val name: String,
+    val attributes: Map<String, Any>,
+    val targetElement: String,
+    val targetType: AnnotationTargetType,
+    val condition: String? = null,
+    val dependencies: List<String>? = null,
+    val phase: AnnotationPhase,
+    val sourceCodeLocation: SourceCodeLocation? = null
 )
