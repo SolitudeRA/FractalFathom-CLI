@@ -6,11 +6,9 @@ package org.protogalaxy.fractalfathom.cli.analysis.annotation
  * @property toConcept The target high-level concept or design pattern being mapped to.
  * @property type The type of mapping, defaulting to concept mapping.
  * @property subMappings Optional list of sub-mappings, allowing nested mappings.
- * @property annotations Optional list of annotations associated with this mapping.
  */
 data class MappingEntity(
     val toConcept: String,
     val type: MappingType = MappingType.CONCEPT,
-    val subMappings: List<MappingEntity>? = null,
-    val annotations: List<AnnotationEntity>? = null
+    val subMappings: List<MappingEntity>? = null
 )

@@ -12,6 +12,8 @@ import spoon.reflect.declaration.CtClass
  */
 class ClassParser {
 
+    private val annotationProcessor = AnnotationProcessor()
+
     /**
      * Parses a `CtClass` object into a custom `IRClassEntity`.
      *
@@ -28,9 +30,8 @@ class ClassParser {
         val interfaces = ctClass.superInterfaces.map { it.qualifiedName }
 
         val annotationParser = AnnotationParser()
-        val annotations = ctClass.annotations.map {
-            annotationParser.parseAnnotation(it)
-        }
+        val parsedAnnotations = ctClass.annotations.map { annotationParser.parseAnnotation(it) }
+        val (features, mappings, annotations) = annotationProcessor.processAnnotations(parsedAnnotations)
 
         val fieldParser = FieldParser()
         val fields = ctClass.fields.map {
@@ -72,8 +73,8 @@ class ClassParser {
             superClass = superClass,
             interfaces = interfaces,
             annotations = annotations,
-            features = emptyList(),
-            mappings = emptyList(),
+            features = features,
+            mappings = mappings,
             fields = fields,
             methods = methods,
             relations = relations,

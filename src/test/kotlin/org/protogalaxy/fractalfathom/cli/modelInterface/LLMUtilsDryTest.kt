@@ -52,16 +52,14 @@ class LLMUtilsDryTest {
                     name = "TestFeature",
                     description = null,
                     type = FeatureType.FUNCTIONAL,
-                    subFeatures = emptyList(),
-                    annotations = emptyList()
+                    subFeatures = emptyList()
                 )
             ),
             mappings = listOf(
                 MappingEntity(
                     toConcept = "BusinessLogic",
                     type = MappingType.CONCEPT,
-                    subMappings = emptyList(),
-                    annotations = emptyList()
+                    subMappings = emptyList()
                 )
             ),
             fields = listOf(

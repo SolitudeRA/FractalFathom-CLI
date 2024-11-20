@@ -10,6 +10,8 @@ import spoon.reflect.declaration.CtMethod
  */
 class MethodParser {
 
+    private val annotationProcessor = AnnotationProcessor()
+
     /**
      * Parses a Spoon `CtMethod` object into a custom `IRMethodEntity`.
      *
@@ -27,10 +29,10 @@ class MethodParser {
             parameterParser.parseParameter(it)
         }
 
+        // Parse annotations and separate them into FeatureEntity, MappingEntity, and others
         val annotationParser = AnnotationParser()
-        val annotations = ctMethod.annotations.map {
-            annotationParser.parseAnnotation(it)
-        }
+        val parsedAnnotations = ctMethod.annotations.map { annotationParser.parseAnnotation(it) }
+        val (features, mappings, annotations) = annotationProcessor.processAnnotations(parsedAnnotations)
 
         val astParser = ASTParser()
         val lowLevelAST = astParser.parseAST(ctMethod)
@@ -49,8 +51,8 @@ class MethodParser {
             parameters = parameters,
             modifiers = modifiers,
             annotations = annotations,
-            features = emptyList(),
-            mappings = emptyList(),
+            features = features,
+            mappings = mappings,
             calledMethods = emptyList(),
             lowLevelAST = lowLevelAST,
             sourceCodeLocation = sourceCodeLocation

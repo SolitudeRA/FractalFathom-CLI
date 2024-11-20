@@ -10,6 +10,8 @@ import spoon.reflect.declaration.CtField
  */
 class FieldParser {
 
+    private val annotationProcessor = AnnotationProcessor()
+
     /**
      * Parses a Spoon `CtField` object into a custom `IRFieldEntity`.
      *
@@ -21,13 +23,10 @@ class FieldParser {
         val type = ctField.type.qualifiedName
         val modifiers = ctField.modifiers.joinToString(" ")
 
-        // 解析注解
         val annotationParser = AnnotationParser()
-        val annotations = ctField.annotations.map {
-            annotationParser.parseAnnotation(it)
-        }
+        val parsedAnnotations = ctField.annotations.map { annotationParser.parseAnnotation(it) }
+        val (features, mappings, annotations) = annotationProcessor.processAnnotations(parsedAnnotations)
 
-        // 源码位置
         val sourceCodeLocation = SourceCodeLocation(
             filePath = ctField.position?.file?.path ?: "",
             startLine = ctField.position?.line ?: 0,
@@ -41,8 +40,8 @@ class FieldParser {
             type = type,
             modifiers = modifiers,
             annotations = annotations,
-            features = emptyList(),
-            mappings = emptyList(),
+            features = features,
+            mappings = mappings,
             sourceCodeLocation = sourceCodeLocation
         )
     }

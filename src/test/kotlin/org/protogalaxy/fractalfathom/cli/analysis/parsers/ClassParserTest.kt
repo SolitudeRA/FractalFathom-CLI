@@ -3,6 +3,8 @@ package org.protogalaxy.fractalfathom.cli.analysis.parsers
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.protogalaxy.fractalfathom.cli.analysis.BaseTest
+import org.protogalaxy.fractalfathom.cli.analysis.annotation.FeatureType
+import org.protogalaxy.fractalfathom.cli.analysis.annotation.MappingType
 
 class ClassParserTest : BaseTest() {
 
@@ -18,16 +20,23 @@ class ClassParserTest : BaseTest() {
         assertNull(classEntity.superClass, "Superclass should be null when there is no explicit parent class")
         assertTrue(classEntity.interfaces.isEmpty(), "Interfaces should be empty")
 
-        // 验证类的注解
-        assertEquals(2, classEntity.annotations.size, "Expected 2 annotations on the class")
-        val featureAnnotation = classEntity.annotations.find { it.name == "org.protogalaxy.fractalfathom.FractalFathomFeature" }
-        val mappingAnnotation = classEntity.annotations.find { it.name == "org.protogalaxy.fractalfathom.FractalFathomMapping" }
+        assertEquals(0, classEntity.annotations.size, "Annotations should not include feature or mapping annotations")
 
-        assertNotNull(featureAnnotation, "Feature annotation should not be null")
-        assertNotNull(mappingAnnotation, "Mapping annotation should not be null")
+        assertEquals(1, classEntity.features.size, "Expected 1 feature in the class")
+        assertEquals(1, classEntity.mappings.size, "Expected 1 mapping in the class")
 
-        // 验证字段和方法数量
-        assertEquals(2, classEntity.fields.size, "Expected 2 field in the class")
+        val featureEntity = classEntity.features.find { it.name == "UserService" }
+        val mappingEntity = classEntity.mappings.find { it.toConcept == "User Management" }
+
+        assertNotNull(featureEntity, "Feature entity should not be null")
+        assertEquals("UserService", featureEntity?.name, "Feature name should match")
+        assertEquals(FeatureType.FUNCTIONAL, featureEntity?.type, "Feature type should be FUNCTIONAL")
+
+        assertNotNull(mappingEntity, "Mapping entity should not be null")
+        assertEquals("User Management", mappingEntity?.toConcept, "Mapping target concept should match")
+        assertEquals(MappingType.MODULE, mappingEntity?.type, "Mapping type should be CONCEPT")
+
+        assertEquals(2, classEntity.fields.size, "Expected 2 fields in the class")
         assertEquals(2, classEntity.methods.size, "Expected 2 methods in the class")
     }
 }

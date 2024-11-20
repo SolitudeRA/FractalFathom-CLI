@@ -7,12 +7,10 @@ package org.protogalaxy.fractalfathom.cli.analysis.annotation
  * @property description Optional description of the feature.
  * @property type The type of feature, indicating whether it is functional or non-functional.
  * @property subFeatures Optional list of sub-features, allowing nested features.
- * @property annotations List of annotations associated with the feature.
  */
 data class FeatureEntity(
     val name: String,
     val description: String? = null,
     val type: FeatureType,
-    val subFeatures: List<FeatureEntity>? = null,
-    val annotations: List<AnnotationEntity>
+    val subFeatures: List<FeatureEntity>? = null
 )
