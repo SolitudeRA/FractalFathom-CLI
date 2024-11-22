@@ -53,11 +53,6 @@ jobs:
           mkdir -p ~/.cache/huggingface/transformers
           transformers-cli download microsoft/graphcodebert-base
 
-      - name: Export environment variable
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: echo "Environment variable set"
-
       # Cache Gradle dependencies to speed up builds
       - name: Cache Gradle dependencies
         uses: actions/cache@v3
@@ -77,10 +72,14 @@ jobs:
 
       # Build the project
       - name: Build Project
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: ./gradlew build
 
       # Run Tests
       - name: Run Tests
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: ./gradlew test
 
       # Build the annotations JAR
