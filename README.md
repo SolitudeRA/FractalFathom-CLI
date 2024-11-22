@@ -1,5 +1,8 @@
 # FractalFathom CLI
 
+![GitHub Actions](https://github.com/SolitudeRA/FractalFathom-CLI/actions/workflows/build.yml/badge.svg)
+[![License](https://img.shields.io/github/license/SolitudeRA/FractalFathom-CLI.svg)](https://github.com/SolitudeRA/FractalFathom-CLI/blob/master/LICENSE)
+
 FractalFathom CLI is a Kotlin-based command-line tool designed to generate functional component diagrams for software using static code analysis and deep learning models. By integrating GraphCodeBERT and GPT-4 API, FractalFathom CLI automates the visualization of Java projects, showing complex relationships between classes, methods, fields, and components.
 
 ## Project Overview
