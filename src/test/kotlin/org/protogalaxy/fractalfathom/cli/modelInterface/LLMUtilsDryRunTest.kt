@@ -18,8 +18,8 @@ import org.protogalaxy.fractalfathom.cli.analysis.ir.IRFieldEntity
 import org.protogalaxy.fractalfathom.cli.analysis.ir.IRMethodEntity
 import org.protogalaxy.fractalfathom.cli.modelInference.LLMUtils
 
-class LLMUtilsDryTest {
-    private val logger = LoggerFactory.getLogger(LLMUtilsDryTest::class.java)
+class LLMUtilsDryRunTest {
+    private val logger = LoggerFactory.getLogger(LLMUtilsDryRunTest::class.java)
 
     @Test
     fun testConstructPrompt() {

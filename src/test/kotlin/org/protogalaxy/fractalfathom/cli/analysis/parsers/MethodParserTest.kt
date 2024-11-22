@@ -3,6 +3,7 @@ package org.protogalaxy.fractalfathom.cli.analysis.parsers
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.protogalaxy.fractalfathom.cli.analysis.BaseTest
+import org.protogalaxy.fractalfathom.cli.analysis.annotation.MappingType
 
 class MethodParserTest : BaseTest() {
 
@@ -21,14 +22,14 @@ class MethodParserTest : BaseTest() {
         assertNotNull(createUserMethod, "createUser method should not be null")
         assertNotNull(deleteUserMethod, "deleteUser method should not be null")
 
-        assertEquals(1, createUserMethod?.annotations?.size, "Expected 2 annotations on createUser method")
-        val mappingAnnotation = createUserMethod?.annotations?.find { it.name == "org.protogalaxy.fractalfathom.FractalFathomMapping" }
+        assertEquals(1, createUserMethod?.mappings?.size, "Expected 1 mappings on createUser method")
+        val mappingAnnotation = createUserMethod?.mappings?.get(0)
 
         assertNotNull(mappingAnnotation, "Mapping annotation should not be null on createUser method")
 
         assertAll("Mapping Annotation Properties",
-            { assertEquals("User Creation", mappingAnnotation?.attributes?.get("toConcept"), "Mapping toConcept attribute should match") },
-            { assertEquals("COMPONENT", mappingAnnotation?.attributes?.get("type"), "Mapping type attribute should match") }
+            { assertEquals("User Creation", mappingAnnotation?.toConcept, "Mapping toConcept attribute should match") },
+            { assertEquals(MappingType.COMPONENT, mappingAnnotation?.type, "Mapping type attribute should match") }
         )
     }
 }

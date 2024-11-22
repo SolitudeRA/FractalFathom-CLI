@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.platform.commons.logging.LoggerFactory
 import org.protogalaxy.fractalfathom.cli.analysis.BaseTest
+import org.protogalaxy.fractalfathom.cli.analysis.annotation.MappingType
 
 class FieldParserTest : BaseTest() {
 
@@ -22,19 +23,23 @@ class FieldParserTest : BaseTest() {
 
         val userRepositoryField = fieldEntities.find { it.name == "userRepository" }
 
-        logger.info { "User Repository Field: ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(userRepositoryField)}" }
+        logger.info {
+            "User Repository Field: ${
+                mapper.writerWithDefaultPrettyPrinter().writeValueAsString(userRepositoryField)
+            }"
+        }
 
         assertNotNull(userRepositoryField, "userRepository field should not be null")
         assertEquals("org.protogalaxy.fractalfathom.cli.resources.UserRepository", userRepositoryField?.type, "Field type should match")
-        assertEquals(1, userRepositoryField?.annotations?.size, "Expected 1 annotation on the field")
+        assertEquals(1, userRepositoryField?.mappings?.size, "Expected 1 mappings on the field")
 
-        val featureAnnotation = userRepositoryField?.annotations?.first()
+        val mappingAnnotation = userRepositoryField?.mappings?.first()
 
-        assertNotNull(featureAnnotation, "Feature annotation should not be null")
-        assertAll("Feature Annotation Properties",
-            { assertEquals("org.protogalaxy.fractalfathom.FractalFathomMapping", featureAnnotation?.name, "Annotation name should match") },
-            { assertEquals("User Repository", featureAnnotation?.attributes?.get("toConcept")) },
-            { assertEquals("COMPONENT", featureAnnotation?.attributes?.get("type"))}
+        assertNotNull(mappingAnnotation, "Mappings annotation should not be null")
+        assertAll(
+            "Mappings Annotation Properties",
+            { assertEquals("User Repository", mappingAnnotation?.toConcept) },
+            { assertEquals(MappingType.COMPONENT, mappingAnnotation?.type, "Annotation name should match") },
         )
     }
 }

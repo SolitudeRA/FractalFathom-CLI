@@ -18,37 +18,12 @@ import org.protogalaxy.fractalfathom.cli.analysis.ir.IRFieldEntity
 import org.protogalaxy.fractalfathom.cli.analysis.ir.IRMethodEntity
 import org.protogalaxy.fractalfathom.cli.modelInference.GraphCodeBERTUtils
 
-
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class GraphCodeBERTUtilsTest {
+class GraphCodeBERTUtilsTest : LiveRunTest() {
 
     private lateinit var graphCodeBERTUtils: GraphCodeBERTUtils
-    private var serverProcess: Process? = null
 
     private val mapper = jacksonObjectMapper() // JSON serializer/deserializer
     private val logger = LoggerFactory.getLogger(GraphCodeBERTUtilsTest::class.java)
-
-    @BeforeAll
-    fun setup() {
-        // 启动Python服务器
-        serverProcess = ProcessBuilder(
-            "python",
-            "src/main/kotlin/org/protogalaxy/fractalfathom/cli/modelInference/server.py"
-        ).redirectOutput(ProcessBuilder.Redirect.INHERIT).redirectError(ProcessBuilder.Redirect.INHERIT).start()
-
-        // 等待服务器启动
-        Thread.sleep(5000) // 等待 5 秒，确保服务器已启动
-        graphCodeBERTUtils = GraphCodeBERTUtils()
-    }
-
-    @AfterAll
-    fun tearDown() {
-        // 关闭Python服务器
-        serverProcess?.apply {
-            destroy()
-            waitFor()
-        }
-    }
 
     @Test
     fun enhanceIRDataWithEmbeddingsTest() {
@@ -117,6 +92,8 @@ class GraphCodeBERTUtilsTest {
             complexityMetrics = ComplexityMetrics(cyclomaticComplexity = 1, nestingDepth = 1, branchCount = 0),
             embedding = null
         )
+
+        graphCodeBERTUtils = GraphCodeBERTUtils()
 
         val enhancedIRClasses = graphCodeBERTUtils.enhanceIRDataWithEmbeddings(listOf(irClass))
 

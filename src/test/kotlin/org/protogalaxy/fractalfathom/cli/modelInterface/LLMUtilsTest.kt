@@ -8,38 +8,10 @@ import org.protogalaxy.fractalfathom.cli.analysis.ir.ComplexityMetrics
 import org.protogalaxy.fractalfathom.cli.analysis.ir.IRClassEntity
 import org.protogalaxy.fractalfathom.cli.modelInference.LLMUtils
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class LLMUtilsTest {
+class LLMUtilsTest : LiveRunTest() {
 
     private lateinit var llmUtils: LLMUtils
-    private var serverProcess: Process? = null
-
     private val logger = LoggerFactory.getLogger(LLMUtilsTest::class.java)
-
-    @BeforeAll
-    fun setup() {
-        // 启动Python服务器
-        serverProcess = ProcessBuilder(
-            "python3",
-            "src/main/kotlin/org/protogalaxy/fractalfathom/cli/modelInference/server.py"
-        ).apply {
-            redirectOutput(ProcessBuilder.Redirect.INHERIT)
-            redirectError(ProcessBuilder.Redirect.INHERIT)
-        }.start()
-
-        // 等待服务器启动
-        Thread.sleep(5000) // 等待 5 秒，确保服务器已启动
-        llmUtils = LLMUtils()
-    }
-
-    @AfterAll
-    fun tearDown() {
-        // 关闭Python服务器
-        serverProcess?.apply {
-            destroy()
-            waitFor()
-        }
-    }
 
     @Test
     fun testGeneratePlantUML() {
@@ -62,6 +34,8 @@ class LLMUtilsTest {
             complexityMetrics = ComplexityMetrics(5, 2, 3),
             embedding = null
         )
+
+        llmUtils = LLMUtils()
 
         // 调用 generatePlantUML 方法
         val plantUMLCode = llmUtils.generatePlantUML(listOf(irClassExample))

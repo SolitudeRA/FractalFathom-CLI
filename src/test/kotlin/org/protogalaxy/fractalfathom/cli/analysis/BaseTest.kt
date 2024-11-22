@@ -18,6 +18,10 @@ open class BaseTest {
         // 添加依赖的类
         launcher.addInputResource(File("$basePath/UserRepository.java").absolutePath)
         launcher.addInputResource(File("$basePath/User.java").absolutePath)
+        launcher.addInputResource(File("$basePath/RoleService.java").absolutePath)
+        launcher.addInputResource(File("$basePath/RoleRepository.java").absolutePath)
+        launcher.addInputResource(File("$basePath/PermissionService.java").absolutePath)
+        launcher.addInputResource(File("$basePath/PermissionRepository.java").absolutePath)
         launcher.buildModel()
 
         ctClass = launcher.model.allTypes.first { it.simpleName == "UserService" } as CtClass<*>
