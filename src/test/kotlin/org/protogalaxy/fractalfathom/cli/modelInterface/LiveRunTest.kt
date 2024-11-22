@@ -23,7 +23,7 @@ open class LiveRunTest {
             redirectError(ProcessBuilder.Redirect.INHERIT)
         }.start()
 
-        val maxWaitTime = 10_000L // 30 seconds
+        val maxWaitTime = 30_000L // 30 seconds
         val startTime = System.currentTimeMillis()
         while (!isServerRunning()) {
             if (System.currentTimeMillis() - startTime > maxWaitTime) {

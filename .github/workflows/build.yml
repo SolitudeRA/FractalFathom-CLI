@@ -52,6 +52,10 @@ jobs:
         run: |
           mkdir -p ~/.cache/huggingface/transformers
           transformers-cli download microsoft/graphcodebert-base
+          
+      - name: Set environment variables
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       # Cache Gradle dependencies to speed up builds
       - name: Cache Gradle dependencies
