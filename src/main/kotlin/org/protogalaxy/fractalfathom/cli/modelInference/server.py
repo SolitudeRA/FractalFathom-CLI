@@ -7,8 +7,8 @@ import tiktoken
 app = Flask(__name__)
 
 # Initialize GraphCodeBERT
-tokenizer = RobertaTokenizer.from_pretrained("microsoft/graphcodebert-base", cache_dir="./cache")
-model = RobertaModel.from_pretrained("microsoft/graphcodebert-base", cache_dir="./cache")
+tokenizer = RobertaTokenizer.from_pretrained("microsoft/graphcodebert-base")
+model = RobertaModel.from_pretrained("microsoft/graphcodebert-base")
 
 """
 ==================================================================================================================
