@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.TestInstance
 import org.junit.platform.commons.logging.LoggerFactory
+import java.io.File
 import java.io.IOException
 import java.net.Socket
 
@@ -17,8 +18,8 @@ open class LiveRunTest {
     fun setup() {
         serverProcess = ProcessBuilder(
             "python3",
-            "src/main/kotlin/org/protogalaxy/fractalfathom/cli/modelInference/server.py"
-        ).apply {
+            "./src/main/kotlin/org/protogalaxy/fractalfathom/cli/modelInference/server.py"
+        ).directory(File(System.getProperty("user.dir"))).apply {
             redirectOutput(ProcessBuilder.Redirect.INHERIT)
             redirectError(ProcessBuilder.Redirect.INHERIT)
         }.start()
@@ -35,9 +36,11 @@ open class LiveRunTest {
 
     @AfterAll
     fun tearDown() {
-        serverProcess?.apply {
-            destroy()
-            waitFor()
+        serverProcess?.let {
+            if (it.isAlive) {
+                it.destroy()
+                it.waitFor()
+            }
         }
     }
 
