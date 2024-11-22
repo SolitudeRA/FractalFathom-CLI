@@ -33,6 +33,6 @@ data class IRMethodEntity(
     val mappings: List<MappingEntity>,
     val calledMethods: List<StaticCallEntity>,
     val lowLevelAST: LowLevelAST?,
-    val sourceCodeLocation: SourceCodeLocation,
+    val sourceCodeLocation: SourceCodeLocation?,
     val embedding: Embedding? = null
 )

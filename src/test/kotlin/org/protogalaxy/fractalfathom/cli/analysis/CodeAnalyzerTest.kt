@@ -11,7 +11,7 @@ class CodeAnalyzerTest {
     private val logger = LoggerFactory.getLogger(CodeAnalyzerTest::class.java)
 
     @Test
-    fun codeAnalyzerMonitoringTest() = runBlocking() {
+    fun codeAnalyzerMonitoringTest() = runBlocking {
         val codeAnalyzer = CodeAnalyzer("src/test/kotlin/org/protogalaxy/fractalfathom/cli/resources")
         val irData = codeAnalyzer.analyzeProject()
 

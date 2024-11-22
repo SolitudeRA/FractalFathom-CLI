@@ -6,6 +6,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.protogalaxy.fractalfathom.cli.analysis.annotation.FeatureEntity
+import org.protogalaxy.fractalfathom.cli.analysis.annotation.MappingEntity
 import org.protogalaxy.fractalfathom.cli.analysis.ir.IRClassEntity
 import org.protogalaxy.fractalfathom.cli.analysis.ir.IRFieldEntity
 import org.protogalaxy.fractalfathom.cli.analysis.ir.IRMethodEntity
@@ -100,25 +102,13 @@ class LLMUtils {
    - Annotate arrows with specific method names or calls (e.g., `createUser(username, email)`).
 
 4. **Ports**:
-   - Use `port` elements only in the correct context:
-     - Syntax: `component [ComponentName] +[PortName]` is invalid in PlantUML.
-     - Instead, explicitly name ports as part of the interaction (e.g., `[UserService] --> [RoleService] : createUserPort`).
+   - Explicitly name ports as part of the interaction (e.g., `[UserService] --> [RoleService] : createUserPort`).
 
 5. **Grouping and Structure**:
    - Use `package` to group related components and interfaces.
    - Use `node` for deployable units and `database` for data repositories.
 
-6. **Annotations and Notes**:
-   - Add `note` annotations to clarify component purposes or interactions where necessary.
-
-7. **Visual Layout**:
-   - Use `skinparam` for styling:
-     ```
-     skinparam componentStyle rectangle
-     skinparam shadowing false
-     ```
-
-8. **Output Requirements**:
+6. **Output Requirements**:
    - Ensure the PlantUML code is syntactically correct and can be rendered without errors.
    - Include only the PlantUML code without additional descriptive text.
             """.trimIndent()
@@ -128,13 +118,11 @@ class LLMUtils {
 
         for (irClass in irClasses) {
             val classInfo = StringBuilder().apply {
-                append("Class: ${irClass.name} (Type: ${irClass.type})\n")
-                irClass.embedding?.let { append("Embeddings:\n- ${it.values.joinToString(", ")}\n") }
-                appendSection("Features", irClass.features.map { feature -> feature.name })
-                appendSection("Mappings", irClass.mappings.map { mapping -> mapping.toConcept })
-                appendSection(
-                    "Relations",
-                    irClass.relations.map { relation -> "${relation.relationType}: ${relation.targetClass}" })
+                append("=== Class: ${irClass.name} (Type: ${irClass.type}) ===\n")
+                irClass.embedding?.let { append("Embeddings:\n  - ${it.values.joinToString(", ")}\n") }
+                appendFeatures(irClass.features)
+                appendMappings(irClass.mappings)
+                appendRelations(irClass.relations.map { relation -> "${relation.relationType}: ${relation.targetClass}" })
                 appendFields(irClass.fields)
                 appendMethods(irClass.methods)
             }
@@ -145,10 +133,31 @@ class LLMUtils {
         return promptBuilder.toString()
     }
 
-    private fun StringBuilder.appendSection(title: String, items: List<String>) {
-        if (items.isNotEmpty()) {
-            append("$title:\n")
-            items.forEach { item -> append("- $item\n") }
+    private fun StringBuilder.appendFeatures(features: List<FeatureEntity>) {
+        if (features.isNotEmpty()) {
+            append("Features (${features.size}):\n")
+            features.distinctBy { it.name }.forEach { feature ->
+                append("- Name: ${feature.name}\n")
+                append("  Type: ${feature.type}\n")
+                append("  Description: ${feature.description}\n")
+            }
+        }
+    }
+
+    private fun StringBuilder.appendMappings(mappings: List<MappingEntity>) {
+        if (mappings.isNotEmpty()) {
+            append("Mappings (${mappings.size}):\n")
+            mappings.distinctBy { it.toConcept }.forEach { mapping ->
+                append("- To Concept: ${mapping.toConcept}\n")
+                append("  Type: ${mapping.type}\n")
+            }
+        }
+    }
+
+    private fun StringBuilder.appendRelations(relations: List<String>) {
+        if (relations.isNotEmpty()) {
+            append("Relations (${relations.size}):\n")
+            relations.forEach { relation -> append("- $relation\n") }
         }
     }
 
@@ -157,39 +166,39 @@ class LLMUtils {
      */
     private fun StringBuilder.appendFields(fields: List<IRFieldEntity>?) {
         fields?.takeIf { it.isNotEmpty() }?.let {
-            append("Fields:\n")
-            for (field in it) {
-                val modifiers = field.modifiers
-                val annotations = field.annotations.joinToString(" ") { annotation -> annotation.name }
-                append("- $modifiers ${field.type} ${field.name} $annotations\n")
-                appendDetails(field.features.map { it.name }, field.mappings.map { it.toConcept })
-            }
+            append("Fields (${fields.size} total):\n")
+            fields.sortedWith(compareBy({ it.modifiers.contains("public") }, { it.name }))
+                .forEach { field ->
+                    append("- ${field.modifiers} ${field.type} ${field.name}\n")
+                    append("  Annotations: ${field.annotations.joinToString(", ") { it.name }}\n")
+                    if (field.mappings.isNotEmpty()) {
+                        append("  Mappings:\n")
+                        field.mappings.forEach { mapping ->
+                            append("    - To Concept: ${mapping.toConcept}\n")
+                            append("      Type: ${mapping.type}\n")
+                        }
+                    }
+                }
         }
     }
+
 
     /**
      * Helper function to append method details to the prompt.
      */
     private fun StringBuilder.appendMethods(methods: List<IRMethodEntity>?) {
         methods?.takeIf { it.isNotEmpty() }?.let {
-            append("Methods:\n")
-            for (method in it) {
-                val modifiers = method.modifiers
-                val annotations = method.annotations.joinToString(" ") { annotation -> annotation.name }
-                val parameters =
-                    method.parameters.joinToString(", ") { parameter -> "${parameter.type} ${parameter.name}" }
-                append("- $modifiers ${method.returnType} ${method.name}($parameters) $annotations\n")
-                appendDetails(method.features.map { it.name }, method.mappings.map { it.toConcept })
+            append("Methods (${methods.size} total):\n")
+            methods.sortedBy { it.name }.forEach { method ->
+                append("- ${method.modifiers} ${method.returnType} ${method.name}(${method.parameters.joinToString(", ") { "${it.type} ${it.name}" }})\n")
+                if (method.mappings.isNotEmpty()) {
+                    append("  Mappings:\n")
+                    method.mappings.forEach { mapping ->
+                        append("    - To Concept: ${mapping.toConcept}\n")
+                        append("      Type: ${mapping.type}\n")
+                    }
+                }
             }
-        }
-    }
-
-    private fun StringBuilder.appendDetails(features: List<String>, mappings: List<String>, embeddings: List<Float>? = null) {
-        if (features.isNotEmpty() || mappings.isNotEmpty() || (embeddings?.isNotEmpty() == true)) {
-            append("    Details:\n")
-            if (features.isNotEmpty()) append("    Features: ${features.joinToString(", ")}\n")
-            if (mappings.isNotEmpty()) append("    Mappings: ${mappings.joinToString(", ")}\n")
-            embeddings?.let { append("    Embedding: ${it.joinToString(", ")}\n") }
         }
     }
 }

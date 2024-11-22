@@ -22,7 +22,6 @@ class LLMUtilsPromptTest {
 
     @BeforeAll
     fun setup() {
-        // 启动Python服务器
         serverProcess = ProcessBuilder(
             "python3",
             "src/main/kotlin/org/protogalaxy/fractalfathom/cli/modelInference/server.py"
@@ -31,14 +30,12 @@ class LLMUtilsPromptTest {
             redirectError(ProcessBuilder.Redirect.INHERIT)
         }.start()
 
-        // 等待服务器启动
-        Thread.sleep(5000) // 等待 5 秒，确保服务器已启动
+        Thread.sleep(5000)
         llmUtils = LLMUtils()
     }
 
     @AfterAll
     fun tearDown() {
-        // 关闭Python服务器
         serverProcess?.apply {
             destroy()
             waitFor()
@@ -53,8 +50,6 @@ class LLMUtilsPromptTest {
 
         val graphCodeBERTUtils = GraphCodeBERTUtils()
         val enhancedIrData = graphCodeBERTUtils.enhanceIRDataWithEmbeddings(irData)
-
-        logger.info { "Enhanced IR data:\n ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(enhancedIrData)}" }
 
         val llmUtils = LLMUtils()
         val prompt = llmUtils.constructPrompt(enhancedIrData)

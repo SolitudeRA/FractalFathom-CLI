@@ -51,49 +51,67 @@ FractalFathom CLI is a Kotlin-based command-line tool designed to generate funct
 
 ### Annotation System
 
-The custom annotation system in FractalFathom enables precise tagging of classes, methods, and fields to specify functional roles, dependencies, and mappings to higher-level concepts. These annotations facilitate detailed feature recognition and business logic mapping in the analysis process.
+The custom annotation system in FractalFathom enables precise tagging of Java classes, methods, and fields to define functional roles and their relationships to higher-level concepts. This annotation system drives the identification of functional components and their mappings in the analysis process.
 
 #### Key Components
 
-1. **Annotation Entities:** Define annotations applied to Java elements (classes, methods, fields) and specify properties like scope, activation phase, and dependencies.
-2. **Feature and Mapping Entities:** `FeatureEntity` denotes specific functionalities, while `MappingEntity` associates code elements with architectural concepts or business logic, enabling structured analysis.
-3. **Annotation Attributes and Contexts:** Provide metadata to specify properties and context, helping maintain consistency and interpretability in large codebases.
+1. **Feature Annotations (`@FractalFathomFeature`)**: Used to define high-level functionalities of classes or interfaces, specifying their purpose and categorizing them into feature types (e.g., `FUNCTIONAL` or `NON_FUNCTIONAL`).
+2. **Mapping Annotations (`@FractalFathomMapping`)**: Establish links between code elements and architectural concepts, aiding in the contextual understanding of software systems.
+3. **Annotation Rules**:
+    - Higher-level elements (e.g., classes, interfaces) can use both `@FractalFathomFeature` and `@FractalFathomMapping`.
+    - Lower-level elements (e.g., methods, fields) are limited to `@FractalFathomMapping`.
 
 #### Example Usage
 
-Below is an example of how to apply annotations in Java, demonstrating functionality identification and logical mapping.
+Below is an example demonstrating the usage of these annotations in a real-world Java application.
 
 ```java
-package org.example;
+package org.protogalaxy.fractalfathom.cli.resources;
 
+import org.protogalaxy.fractalfathom.FeatureType;
+import org.protogalaxy.fractalfathom.MappingType;
 import org.protogalaxy.fractalfathom.FractalFathomFeature;
 import org.protogalaxy.fractalfathom.FractalFathomMapping;
 
-@FractalFathomFeature(name = "User Authentication", description = "Handles user login and session management", type = FeatureType.FUNCTIONAL)
-public class AuthService {
+@FractalFathomFeature(name = "UserService", description = "Handles user-related operations", type = FeatureType.FUNCTIONAL)
+@FractalFathomMapping(toConcept = "User Management", type = MappingType.MODULE)
+public class UserService {
 
-    @FractalFathomFeature(name = "Encrypt Password", description = "Encrypts passwords using SHA-256", type = FeatureType.FUNCTIONAL)
-    @FractalFathomMapping(toConcept = "Security")
-    private String encryptPassword(String password) {
-        // Password encryption logic here
+    @FractalFathomMapping(toConcept = "User Repository", type = MappingType.COMPONENT)
+    private UserRepository userRepository;
+
+    @FractalFathomMapping(toConcept = "Role Service Interaction", type = MappingType.COMPONENT)
+    private RoleService roleService;
+
+    public UserService(UserRepository userRepository, RoleService roleService) {
+        this.userRepository = userRepository;
+        this.roleService = roleService;
     }
 
-    @FractalFathomFeature(name = "Session Management", description = "Manages user sessions", type = FeatureType.FUNCTIONAL)
-    public void manageSession(User user) {
-        // Session management logic
+    @FractalFathomMapping(toConcept = "User Creation", type = MappingType.COMPONENT)
+    public void createUser(String username, String email, String role) {
+        userRepository.save(new User(username, email));
+        
+        roleService.assignRole(username, role);
+    }
+
+    @FractalFathomMapping(toConcept = "User Deletion", type = MappingType.COMPONENT)
+    public void deleteUser(String username) {
+        userRepository.delete(username);
+        
+        roleService.revokeAllRoles(username);
     }
 }
 ```
 
 #### Explanation
 
-- **Class-Level Annotation:** `@Feature` on `AuthService` tags the entire class with the functionality of "User Authentication," aiding the system in identifying this as a key feature within the code.
-- **Method-Level Annotation:** `@Feature` on `encryptPassword` specifies the function's purpose. The `@Mapping` annotation links it to the "Security" concept, marking it as part of the security logic within the business context.
-- **Multi-Method Tagging:** Additional methods like `manageSession` are tagged as separate functionalities, allowing deep analysis of each component’s role within the class.
+- **Class-Level Feature Annotation**: `@FractalFathomFeature` on `UserService` defines it as a high-level functionality handling "User Management."
+- **Class-Level Mapping Annotation**: `@FractalFathomMapping` maps the `UserService` class to the architectural concept "User Management."
+- **Field-Level Mapping Annotations**: Fields `userRepository` and `roleService` are mapped to respective components in the system architecture.
+- **Method-Level Mapping Annotations**: Methods like `createUser` and `deleteUser` are mapped to specific functional components, providing detailed insight into their roles within the larger context.
 
-These annotations, when processed, provide FractalFathom with a structured understanding of each component's role and interconnections, facilitating a clear and interactive visualization of complex systems in the generated PlantUML component diagrams.
-
----
+These annotations help FractalFathom perform structured analysis, producing accurate and visually comprehensible diagrams for understanding complex software architectures.
 
 ### Start the Server
 

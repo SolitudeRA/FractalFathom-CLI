@@ -118,12 +118,10 @@ class GraphCodeBERTUtilsTest {
             embedding = null
         )
 
-        // 调用 GraphCodeBERTUtils 增强 IR 数据
         val enhancedIRClasses = graphCodeBERTUtils.enhanceIRDataWithEmbeddings(listOf(irClass))
 
         logger.info { "Enhanced IR Classes: ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(enhancedIRClasses)}" }
 
-        // 验证返回的数据是否包含嵌入向量
         val enhancedClass = enhancedIRClasses.first()
         assertNotNull(enhancedClass.embedding)
         assertEquals(enhancedClass.embedding?.values?.size, 32)

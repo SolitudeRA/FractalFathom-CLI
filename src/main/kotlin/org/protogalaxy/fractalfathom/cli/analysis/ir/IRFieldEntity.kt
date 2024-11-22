@@ -24,6 +24,6 @@ data class IRFieldEntity(
     val annotations: List<AnnotationEntity>,
     val features: List<FeatureEntity>,
     val mappings: List<MappingEntity>,
-    val sourceCodeLocation: SourceCodeLocation,
+    val sourceCodeLocation: SourceCodeLocation?,
     val embedding: Embedding? = null
 )

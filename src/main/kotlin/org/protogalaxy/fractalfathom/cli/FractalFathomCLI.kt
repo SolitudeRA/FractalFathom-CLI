@@ -15,7 +15,7 @@ class FractalFathomCLI(private val projectPath: String, private val outputDir: S
         val irData = codeAnalyzer.analyzeProject()
 
         val graphCodeBERTUtils = GraphCodeBERTUtils()
-        val enhancedIrData = graphCodeBERTUtils.enhanceIRDataWithEmbeddings(irData)
+        var enhancedIrData = graphCodeBERTUtils.enhanceIRDataWithEmbeddings(irData)
 
         val llmUtils = LLMUtils()
         val plantUMLCode = llmUtils.generatePlantUML(enhancedIrData)

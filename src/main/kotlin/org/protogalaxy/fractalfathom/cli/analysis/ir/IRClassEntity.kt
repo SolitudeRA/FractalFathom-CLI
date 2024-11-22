@@ -41,7 +41,7 @@ data class IRClassEntity(
     val fields: List<IRFieldEntity>,
     val methods: List<IRMethodEntity>,
     val relations: List<StaticRelationEntity>,
-    val sourceCodeLocation: SourceCodeLocation,
+    val sourceCodeLocation: SourceCodeLocation?,
     val complexityMetrics: ComplexityMetrics,
     val embedding: Embedding? = null
 )
