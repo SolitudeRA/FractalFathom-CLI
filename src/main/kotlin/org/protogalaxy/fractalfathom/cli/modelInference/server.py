@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from openai import OpenAI
 from transformers import RobertaTokenizer, RobertaModel
 import torch
+import tiktoken
 
 app = Flask(__name__)
 
@@ -96,6 +97,11 @@ def generate_plantuml():
     # Prepare the prompt for GPT-4
     prompt = data['prompt']
 
+    token_count = count_tokens(prompt, target_model="chatgpt-4o-latest")
+
+    # Log the token count
+    app.logger.info(f"Token count for prompt: {token_count}")
+
     client = OpenAI(
         api_key=data['api_key'],
     )
@@ -107,7 +113,7 @@ def generate_plantuml():
             {"role": "system", "content": "You are an assistant that generates PlantUML component diagrams based on code structure data."},
             {"role": "user", "content": prompt}
         ],
-        max_tokens=16384,
+        max_tokens=16384 - token_count,
         temperature=0,
         n=1
     )
@@ -116,5 +122,19 @@ def generate_plantuml():
 
     return jsonify({'plantuml_code': plantuml_code})
 
+def count_tokens(text, target_model="chatgpt-4o-latest"):
+    """
+    Count the number of tokens in a given text using tiktoken.
+
+    Parameters:
+        - text (str): The input text to count tokens for.
+        - target_model (str): The model to use for tokenization.
+
+    Returns:
+        - int: The token count.
+    """
+    encoding = tiktoken.encoding_for_model(target_model)
+    return len(encoding.encode(text))
+
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

@@ -37,6 +37,6 @@ class ClassParserTest : BaseTest() {
         assertEquals(MappingType.MODULE, mappingEntity?.type, "Mapping type should be CONCEPT")
 
         assertEquals(2, classEntity.fields.size, "Expected 2 fields in the class")
-        assertEquals(2, classEntity.methods.size, "Expected 2 methods in the class")
+        assertEquals(3, classEntity.methods.size, "Expected 3 methods in the class")
     }
 }

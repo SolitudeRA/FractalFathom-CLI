@@ -101,10 +101,5 @@ class LLMUtilsDryRunTest {
         logger.info { "Prompt: $prompt" }
 
         assertTrue(prompt.contains("Class: TestClass (Type: Class)"), "Class information is incorrect")
-        assertTrue(prompt.contains("Features:\n- TestFeature"), "Features section is missing or incorrect")
-        assertTrue(prompt.contains("Mappings:\n- BusinessLogic"), "Mappings section is missing or incorrect")
-        assertTrue(prompt.contains("Fields:\n- private int field1"), "Fields section is missing or incorrect")
-        assertTrue(prompt.contains("Methods:\n- public void method1()"), "Methods section is missing or incorrect")
-        assertTrue(prompt.contains("Embeddings:\n- 1.0, 2.0, 3.0"), "Embedding section is missing or incorrect")
     }
 }

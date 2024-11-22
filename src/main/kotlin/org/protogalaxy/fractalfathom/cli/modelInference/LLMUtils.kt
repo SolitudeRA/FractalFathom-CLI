@@ -32,6 +32,8 @@ class LLMUtils {
     private val openaiApiKey = System.getenv("OPENAI_API_KEY")
         ?: throw IllegalStateException("Environment variable OPENAI_API_KEY is not set")
 
+    private val BASE_INDENT = 2
+
     /**
      * Generates PlantUML code for the given list of IRClassEntity objects.
      *
@@ -84,120 +86,126 @@ class LLMUtils {
     fun constructPrompt(irClasses: List<IRClassEntity>): String {
         val promptBuilder = StringBuilder()
         promptBuilder.append("Based on the following code structure data, generate a PlantUML component diagram code that meets the following requirements:\n")
-
-        promptBuilder.append(
-            """
-1. **Component Representation**:
-   - Use `component` to represent services (e.g., `UserService`, `RoleService`, `PermissionService`).
-   - Attach `<<stereotype>>` to each `component` (e.g., `<<service>>`, `<<repository>>`).
-
-2. **Interface Representation**:
-   - Use `interface` to define APIs or contracts between components (e.g., `IUserService`).
-   - Connect components to their interfaces using `..>` arrows (e.g., `[UserService] ..> [IUserService] : <<implements>>`).
-
-3. **Relationships**:
-   - Use arrows to represent relationships between components and their dependencies:
-     - `-->` for `uses` relationships.
-     - `..>` for `implements` relationships.
-   - Annotate arrows with specific method names or calls (e.g., `createUser(username, email)`).
-
-4. **Ports**:
-   - Explicitly name ports as part of the interaction (e.g., `[UserService] --> [RoleService] : createUserPort`).
-
-5. **Grouping and Structure**:
-   - Use `package` to group related components and interfaces.
-   - Use `node` for deployable units and `database` for data repositories.
-
-6. **Output Requirements**:
-   - Ensure the PlantUML code is syntactically correct and can be rendered without errors.
-   - Include only the PlantUML code without additional descriptive text.
-            """.trimIndent()
-        )
+        appendRequirements(promptBuilder)
 
         promptBuilder.append("\nHere is the code structure data:\n")
-
-        for (irClass in irClasses) {
-            val classInfo = StringBuilder().apply {
-                append("=== Class: ${irClass.name} (Type: ${irClass.type}) ===\n")
-                irClass.embedding?.let { append("Embeddings:\n  - ${it.values.joinToString(", ")}\n") }
-                appendFeatures(irClass.features)
-                appendMappings(irClass.mappings)
-                appendRelations(irClass.relations.map { relation -> "${relation.relationType}: ${relation.targetClass}" })
-                appendFields(irClass.fields)
-                appendMethods(irClass.methods)
-            }
-            promptBuilder.append(classInfo).append("\n")
-        }
-
+        irClasses.forEach { irClass -> appendClassData(promptBuilder, irClass) }
         promptBuilder.append("\nOutput only the PlantUML component diagram code, without any additional text.")
+
         return promptBuilder.toString()
     }
 
-    private fun StringBuilder.appendFeatures(features: List<FeatureEntity>) {
+    private fun appendRequirements(promptBuilder: StringBuilder) {
+        promptBuilder.append(
+            """
+1. **Component Representation**:
+   - Use `component` to represent each class, such as `UserService`, `RoleService`, `PermissionService`, `UserRepository`, `RoleRepository`, `PermissionRepository`, `User`.
+   - Attach appropriate `<<stereotype>>` to each `component` based on the `Type` in `Features` or `Mappings` (e.g., `<<service>>`, `<<repository>>`, `<<entity>>`, `<<module>>`, `<<component>>`).
+
+2. **Interface Representation**:
+   - If applicable, use `interface` to represent interfaces or contracts.
+   - Show implementation relationships using `..>` arrows with labels like `<<implements>>`.
+
+3. **Relationships**:
+   - Use arrows to represent dependencies and interactions between components:
+     - `-->` for `uses` or dependency relationships.
+     - `..>` for `implements` relationships.
+   - Annotate arrows with method names or interactions specified in the `Methods` section (e.g., `createUser(username, email)`).
+
+4. **Ports**:
+   - Explicitly name ports or interaction points if mentioned in `Fields` or `Methods`.
+
+5. **Grouping and Structure**:
+   - Use keywords like `package`, `node`, `folder`, `frame`, `cloud`, `database` to group related components based on their domain (e.g., services, repositories, entities).
+   - Use `database` to represent data repositories.
+
+6. **Utilize Code Structure Data**:
+   - Refer to the `Features`, `Mappings`, `Relations`, `Fields`, and `Methods` in the code structure data to inform component stereotypes and groupings.
+   - Use the `Type` in `Features` to determine the `<<stereotype>>` of components.
+   - Establish relationships and groupings between components based on the `To Concept` and `Type` in `Mappings`.
+   - If there are `Mappings` in `Fields` and `Methods`, consider reflecting them in the component diagram.
+
+7. **Ignore Non-relevant Data**:
+   - Do not include `Embeddings`, code comments, or other irrelevant data in the diagram.
+
+8. **Output Requirements**:
+   - Provide only the PlantUML code without any additional descriptive text.
+   - Ensure the code is syntactically correct and can be rendered without errors.
+            """.trimIndent()
+        )
+    }
+
+    private fun appendClassData(builder: StringBuilder, irClass: IRClassEntity) {
+        builder.append("=== Class: ${irClass.name} (Type: ${irClass.type}) ===\n")
+        irClass.embedding?.let { builder.append("Embeddings:\n  - ${it.values.joinToString(", ")}\n") }
+        appendFeatures(builder, irClass.features, 0)
+        appendMappings(builder, irClass.mappings, 0)
+        appendRelations(builder, irClass.relations.map { "${it.relationType}: ${it.targetClass}" }, 0)
+        appendFields(builder, irClass.fields, 0)
+        appendMethods(builder, irClass.methods, 0)
+    }
+
+    private fun appendFeatures(builder: StringBuilder, features: List<FeatureEntity>, indentLevel: Int) {
         if (features.isNotEmpty()) {
-            append("Features (${features.size}):\n")
-            features.distinctBy { it.name }.forEach { feature ->
-                append("- Name: ${feature.name}\n")
-                append("  Type: ${feature.type}\n")
-                append("  Description: ${feature.description}\n")
+            val currentIndent = " ".repeat(BASE_INDENT * indentLevel)
+            builder.append("${currentIndent}Features (${features.size}):\n")
+            features.forEach { feature ->
+                builder.append("$currentIndent  - Name: ${feature.name}\n")
+                builder.append("$currentIndent    Type: ${feature.type}\n")
+                builder.append("$currentIndent    Description: ${feature.description}\n")
             }
         }
     }
 
-    private fun StringBuilder.appendMappings(mappings: List<MappingEntity>) {
+    private fun appendMappings(builder: StringBuilder, mappings: List<MappingEntity>, indentLevel: Int) {
         if (mappings.isNotEmpty()) {
-            append("Mappings (${mappings.size}):\n")
-            mappings.distinctBy { it.toConcept }.forEach { mapping ->
-                append("- To Concept: ${mapping.toConcept}\n")
-                append("  Type: ${mapping.type}\n")
+            val currentIndent = " ".repeat(BASE_INDENT * indentLevel)
+            builder.append("${currentIndent}Mappings (${mappings.size}):\n")
+            mappings.forEach { mapping ->
+                builder.append("$currentIndent  - To Concept: ${mapping.toConcept}\n")
+                builder.append("$currentIndent    Type: ${mapping.type}\n")
             }
         }
     }
 
-    private fun StringBuilder.appendRelations(relations: List<String>) {
+    private fun appendRelations(builder: StringBuilder, relations: List<String>, indentLevel: Int) {
         if (relations.isNotEmpty()) {
-            append("Relations (${relations.size}):\n")
-            relations.forEach { relation -> append("- $relation\n") }
+            val currentIndent = " ".repeat(BASE_INDENT * indentLevel)
+            builder.append("${currentIndent}Relations (${relations.size}):\n")
+            relations.forEach { relation -> builder.append("$currentIndent- $relation\n") }
         }
     }
 
     /**
      * Helper function to append field details to the prompt.
      */
-    private fun StringBuilder.appendFields(fields: List<IRFieldEntity>?) {
+    private fun appendFields(builder: StringBuilder, fields: List<IRFieldEntity>?, indentLevel: Int) {
         fields?.takeIf { it.isNotEmpty() }?.let {
-            append("Fields (${fields.size} total):\n")
-            fields.sortedWith(compareBy({ it.modifiers.contains("public") }, { it.name }))
-                .forEach { field ->
-                    append("- ${field.modifiers} ${field.type} ${field.name}\n")
-                    append("  Annotations: ${field.annotations.joinToString(", ") { it.name }}\n")
-                    if (field.mappings.isNotEmpty()) {
-                        append("  Mappings:\n")
-                        field.mappings.forEach { mapping ->
-                            append("    - To Concept: ${mapping.toConcept}\n")
-                            append("      Type: ${mapping.type}\n")
-                        }
-                    }
-                }
+            val currentIndent = " ".repeat(BASE_INDENT * indentLevel)
+            builder.append("Fields (${fields.size}):\n")
+            fields.forEach { field ->
+                builder.append("$currentIndent  - ${field.modifiers} ${field.type} ${field.name}\n")
+                appendMappings(builder, field.mappings, indentLevel + BASE_INDENT)
+            }
         }
     }
-
 
     /**
      * Helper function to append method details to the prompt.
      */
-    private fun StringBuilder.appendMethods(methods: List<IRMethodEntity>?) {
+    private fun appendMethods(builder: StringBuilder, methods: List<IRMethodEntity>?, indentLevel: Int) {
         methods?.takeIf { it.isNotEmpty() }?.let {
-            append("Methods (${methods.size} total):\n")
-            methods.sortedBy { it.name }.forEach { method ->
-                append("- ${method.modifiers} ${method.returnType} ${method.name}(${method.parameters.joinToString(", ") { "${it.type} ${it.name}" }})\n")
-                if (method.mappings.isNotEmpty()) {
-                    append("  Mappings:\n")
-                    method.mappings.forEach { mapping ->
-                        append("    - To Concept: ${mapping.toConcept}\n")
-                        append("      Type: ${mapping.type}\n")
-                    }
-                }
+            val currentIndent = " ".repeat(BASE_INDENT * indentLevel)
+            builder.append("${currentIndent}Methods (${methods.size}):\n")
+            methods.forEach { method ->
+                builder.append(
+                    "$currentIndent  - ${method.modifiers} ${method.returnType} ${method.name}(${
+                        method.parameters.joinToString(
+                            ", "
+                        ) { "${it.type} ${it.name}" }
+                    })\n"
+                )
+                appendMappings(builder, method.mappings, indentLevel + BASE_INDENT)
             }
         }
     }

@@ -7,7 +7,6 @@ import org.protogalaxy.fractalfathom.cli.analysis.CodeAnalyzer
 import org.protogalaxy.fractalfathom.cli.modelInference.GraphCodeBERTUtils
 import org.protogalaxy.fractalfathom.cli.modelInference.LLMUtils
 
-
 class LLMUtilsPromptTest : LiveRunTest() {
 
     private lateinit var llmUtils: LLMUtils

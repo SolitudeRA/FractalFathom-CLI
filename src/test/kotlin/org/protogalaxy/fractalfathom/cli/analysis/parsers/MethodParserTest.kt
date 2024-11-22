@@ -14,7 +14,7 @@ class MethodParserTest : BaseTest() {
         val methodParser = MethodParser()
         val methodEntities = methods.map { methodParser.parseMethod(it) }
 
-        assertEquals(2, methodEntities.size, "Expected 2 methods in the class")
+        assertEquals(3, methodEntities.size, "Expected 3 methods in the class")
 
         val createUserMethod = methodEntities.find { it.name == "createUser" }
         val deleteUserMethod = methodEntities.find { it.name == "deleteUser" }
