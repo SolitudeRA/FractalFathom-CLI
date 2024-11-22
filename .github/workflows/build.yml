@@ -28,9 +28,17 @@ jobs:
         with:
           python-version: 3.13.0
 
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install Python dependencies
         run: |
-          pip install flask transformers tiktoken openai torch
+          pip install -r requirements.txt
 
       # Cache Gradle dependencies to speed up builds
       - name: Cache Gradle dependencies
