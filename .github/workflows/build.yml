@@ -48,12 +48,10 @@ jobs:
           restore-keys: |
             huggingface-${{ runner.os }}-
 
-      - name: Download models
+      - name: Preload GraphCodeBERT model
         run: |
-          python3 -c "
-          from transformers import RobertaTokenizer, RobertaModel;
-          tokenizer = RobertaTokenizer.from_pretrained('microsoft/graphcodebert-base');
-          model = RobertaModel.from_pretrained('microsoft/graphcodebert-base')"
+          mkdir -p ~/.cache/huggingface/transformers
+          transformers-cli download microsoft/graphcodebert-base
 
       # Cache Gradle dependencies to speed up builds
       - name: Cache Gradle dependencies
