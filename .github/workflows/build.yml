@@ -30,7 +30,7 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install flask transformers tiktoken openai
+          pip install flask transformers tiktoken openai torch
 
       - name: Validate server script
         run: python3 src/main/kotlin/org/protogalaxy/fractalfathom/cli/modelInference/server.py --help || echo "Validation passed"
