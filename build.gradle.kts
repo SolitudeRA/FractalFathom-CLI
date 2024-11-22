@@ -27,18 +27,43 @@ sourceSets {
     }
 }
 
-// Build task to create a separate JAR for annotations
+// Clean and build the project
+tasks.register("cleanBuild") {
+    group = "build"
+    description = "Clean and build the project"
+    dependsOn("clean", "build")
+}
+
+// Build task to create the annotations JAR
 tasks.register<Jar>("buildLib") {
     archiveClassifier.set("annotations")
     from(sourceSets["annotations"].output)
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
 }
 
-// Clean and build the project
-tasks.register("cleanBuild") {
+tasks.register<Jar>("fatJar") {
     group = "build"
-    description = "Clean and build the project"
-    dependsOn("clean", "build")
+    description = "Assemble a fat JAR with all dependencies"
+    archiveClassifier.set("all") // Name the output JAR file with a "-all" suffix
+
+    from(sourceSets.main.get().output)
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    // Include dependencies
+    dependsOn(configurations.runtimeClasspath)
+    from({
+        configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }
+    })
+
+    // Set JAR manifest
+    manifest {
+        attributes(
+            "Main-Class" to application.mainClass.get() // Use the main class from the application plugin
+        )
+    }
+
+    destinationDirectory.set(layout.buildDirectory.dir("libs"))
 }
 
 dependencies {

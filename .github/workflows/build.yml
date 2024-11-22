@@ -1,0 +1,73 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build, Test, and Upload Artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code from your repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up JDK 21 for your project
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      # Cache Gradle dependencies to speed up builds
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # Grant execute permissions for the Gradle wrapper
+      - name: Grant execute permissions for Gradle wrapper
+        run: chmod +x ./gradlew
+
+      # Run the Gradle clean task
+      - name: Run Clean
+        run: ./gradlew clean
+
+      # Build the project
+      - name: Build Project
+        run: ./gradlew build
+
+      # Run Tests
+      - name: Run Tests
+        run: ./gradlew test
+
+      # Build the annotations JAR
+      - name: Build Annotations JAR
+        run: ./gradlew buildLib
+
+      # Create the Fat JAR
+      - name: Build Fat JAR
+        run: ./gradlew fatJar
+
+      # Upload the Annotations JAR
+      - name: Upload Annotations JAR
+        uses: actions/upload-artifact@v3
+        with:
+          name: fractalfathom-annotations
+          path: build/libs/*-annotations.jar
+
+      # Upload the Fat JAR
+      - name: Upload Fat JAR
+        uses: actions/upload-artifact@v3
+        with:
+          name: fractalfathom-cli-all
+          path: build/libs/*-all.jar
