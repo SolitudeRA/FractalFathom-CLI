@@ -7,6 +7,7 @@ import org.junit.platform.commons.logging.LoggerFactory
 import java.io.File
 import java.io.IOException
 import java.net.Socket
+import java.util.concurrent.TimeUnit
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 open class LiveRunTest {
@@ -39,7 +40,7 @@ open class LiveRunTest {
         serverProcess?.let {
             if (it.isAlive) {
                 it.destroy()
-                it.waitFor()
+                it.waitFor(30, TimeUnit.SECONDS)
             }
         }
     }

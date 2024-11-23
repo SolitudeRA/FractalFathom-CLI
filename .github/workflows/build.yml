@@ -51,9 +51,8 @@ jobs:
       - name: Preload GraphCodeBERT model
         run: |
           mkdir -p ~/.cache/huggingface/transformers
-          transformers-cli download microsoft/graphcodebert-base
+          python -c "from transformers import RobertaModel; RobertaModel.from_pretrained('microsoft/graphcodebert-base')"
 
-      # Cache Gradle dependencies to speed up builds
       - name: Cache Gradle dependencies
         uses: actions/cache@v3
         with:
@@ -62,42 +61,43 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # Grant execute permissions for the Gradle wrapper
       - name: Grant execute permissions for Gradle wrapper
         run: chmod +x ./gradlew
 
-      # Run the Gradle clean task
       - name: Run Clean
         run: ./gradlew clean
 
-      # Build the project
       - name: Build Project
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: ./gradlew build
 
-      # Run Tests
       - name: Run Tests
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: ./gradlew test
 
-      # Build the annotations JAR
+      - name: Generate Coverage Report
+        run: ./gradlew jacocoTestReport
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: build/reports/jacoco/test/html
+
       - name: Build Annotations JAR
         run: ./gradlew buildLib
 
-      # Create the Fat JAR
       - name: Build Fat JAR
         run: ./gradlew fatJar
 
-      # Upload the Annotations JAR
       - name: Upload Annotations JAR
         uses: actions/upload-artifact@v3
         with:
           name: fractalfathom-annotations
           path: build/libs/*-annotations.jar
 
-      # Upload the Fat JAR
       - name: Upload Fat JAR
         uses: actions/upload-artifact@v3
         with:

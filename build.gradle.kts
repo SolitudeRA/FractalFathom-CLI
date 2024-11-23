@@ -1,5 +1,6 @@
 plugins {
     id("application")
+    id("jacoco")
     kotlin("jvm") version "2.0.21"
 }
 
@@ -19,6 +20,10 @@ val coroutinesVersion = "1.9.0"
 val slf4jVersion = "2.0.16"
 val junitVersion = "5.11.3"
 val mockkVersion = "1.13.13"
+
+jacoco {
+    toolVersion = "0.8.12"
+}
 
 // Separate source set for annotations
 sourceSets {
@@ -91,8 +96,17 @@ application {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy("jacocoTestReport")
     testLogging {
         events("passed", "skipped", "failed")
+    }
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
     }
 }
 
