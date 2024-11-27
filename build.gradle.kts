@@ -33,13 +33,6 @@ sourceSets {
     }
 }
 
-// Clean and build the project
-tasks.register("cleanBuild") {
-    group = "build"
-    description = "Clean and build the project"
-    dependsOn("clean", "build")
-}
-
 // Build task to create the annotations JAR
 tasks.register<Jar>("buildLib") {
     archiveClassifier.set("annotations")
@@ -48,14 +41,25 @@ tasks.register<Jar>("buildLib") {
 }
 
 tasks.shadowJar {
-    archiveClassifier.set("") // This will produce a JAR without the "-all" suffix
-
     manifest {
         attributes["Main-Class"] = "org.protogalaxy.fractalfathom.cli.MainKt"
     }
 
     // Exclude signature files to prevent SecurityException
     exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
+}
+
+tasks.named<CreateStartScripts>("startScripts") {
+    dependsOn(tasks.shadowJar)
+    classpath = files(tasks.shadowJar.get().archiveFile)
+}
+
+tasks.named<Zip>("distZip") {
+    dependsOn(tasks.shadowJar)
+}
+
+tasks.named<Tar>("distTar") {
+    dependsOn(tasks.shadowJar)
 }
 
 dependencies {
@@ -79,6 +83,17 @@ dependencies {
 
 application {
     mainClass.set("org.protogalaxy.fractalfathom.cli.MainKt")
+    distributions {
+        main {
+            contents {
+                from(tasks.shadowJar) {
+                    into("lib")
+                }
+                // Exclude the default JAR file
+                exclude("lib/${tasks.jar.get().archiveFileName.get()}")
+            }
+        }
+    }
 }
 
 tasks.test {
