@@ -7,6 +7,7 @@ fun main(args: Array<String>) {
     }
     val projectPath = args[0]
     val outputDir = args[1]
-    val cli = FractalFathomCLI(projectPath, outputDir)
+    val analyzeOnly = args.contains("--analyze-only")
+    val cli = FractalFathomCLI(projectPath, outputDir, analyzeOnly)
     cli.run()
 }

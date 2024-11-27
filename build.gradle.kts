@@ -2,6 +2,7 @@ plugins {
     id("application")
     id("jacoco")
     kotlin("jvm") version "2.0.21"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "org.protogalaxy"
@@ -46,29 +47,15 @@ tasks.register<Jar>("buildLib") {
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
 }
 
-tasks.register<Jar>("fatJar") {
-    group = "build"
-    description = "Assemble a fat JAR with all dependencies"
-    archiveClassifier.set("all") // Name the output JAR file with a "-all" suffix
+tasks.shadowJar {
+    archiveClassifier.set("") // This will produce a JAR without the "-all" suffix
 
-    from(sourceSets.main.get().output)
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    // Include dependencies
-    dependsOn(configurations.runtimeClasspath)
-    from({
-        configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }
-    })
-
-    // Set JAR manifest
     manifest {
-        attributes(
-            "Main-Class" to application.mainClass.get() // Use the main class from the application plugin
-        )
+        attributes["Main-Class"] = "org.protogalaxy.fractalfathom.cli.MainKt"
     }
 
-    destinationDirectory.set(layout.buildDirectory.dir("libs"))
+    // Exclude signature files to prevent SecurityException
+    exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
 }
 
 dependencies {
