@@ -70,12 +70,12 @@ jobs:
       - name: Build Project
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: ./gradlew build
+        run: ./gradlew build --no-daemon --info
 
       - name: Run Tests
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: ./gradlew test
+        run: ./gradlew test --no-daemon --info
 
       - name: Generate Coverage Report
         run: ./gradlew jacocoTestReport
@@ -98,8 +98,8 @@ jobs:
       - name: Build Annotations JAR
         run: ./gradlew buildLib
 
-      - name: Build Fat JAR
-        run: ./gradlew fatJar
+      - name: Build Shadow JAR
+        run: ./gradlew shadowJar
 
       - name: Upload Annotations JAR
         uses: actions/upload-artifact@v3
@@ -107,8 +107,8 @@ jobs:
           name: fractalfathom-annotations
           path: build/libs/*-annotations.jar
 
-      - name: Upload Fat JAR
+      - name: Upload Shadow JAR
         uses: actions/upload-artifact@v3
         with:
-          name: fractalfathom-cli-all
+          name: fractalfathom-cli-shadow
           path: build/libs/*-all.jar
