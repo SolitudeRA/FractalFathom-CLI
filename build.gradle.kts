@@ -18,7 +18,7 @@ val jacksonVersion = "2.18.0"
 val spoonVersion = "11.1.0"
 val plantUMLVersion = "1.2024.7"
 val coroutinesVersion = "1.9.0"
-val slf4jVersion = "2.0.16"
+val neo4jVersion = "5.25.1"
 val junitVersion = "5.11.3"
 val mockkVersion = "1.13.13"
 
@@ -41,6 +41,8 @@ tasks.register<Jar>("buildLib") {
 }
 
 tasks.shadowJar {
+    isZip64 = true
+
     manifest {
         attributes["Main-Class"] = "org.protogalaxy.fractalfathom.cli.MainKt"
     }
@@ -71,7 +73,7 @@ dependencies {
     implementation("fr.inria.gforge.spoon:spoon-core:$spoonVersion")
     implementation("net.sourceforge.plantuml:plantuml:$plantUMLVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    implementation("org.neo4j:neo4j:5.25.1")
+    implementation("org.neo4j:neo4j:$neo4jVersion")
 
     // Test dependencies
     testImplementation(platform("org.junit:junit-bom:$junitVersion"))
