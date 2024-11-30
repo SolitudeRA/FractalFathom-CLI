@@ -69,9 +69,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation("fr.inria.gforge.spoon:spoon-core:$spoonVersion")
-    implementation("org.slf4j:slf4j-simple:$slf4jVersion")
     implementation("net.sourceforge.plantuml:plantuml:$plantUMLVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    implementation("org.neo4j:neo4j:5.25.1")
 
     // Test dependencies
     testImplementation(platform("org.junit:junit-bom:$junitVersion"))
