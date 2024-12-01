@@ -26,14 +26,12 @@ jacoco {
     toolVersion = "0.8.12"
 }
 
-// Separate source set for annotations
 sourceSets {
     create("annotations") {
         java.srcDir("src/annotations/java")
     }
 }
 
-// Build task to create the annotations JAR
 tasks.register<Jar>("buildLib") {
     archiveClassifier.set("annotations")
     from(sourceSets["annotations"].output)
@@ -47,7 +45,6 @@ tasks.shadowJar {
         attributes["Main-Class"] = "org.protogalaxy.fractalfathom.cli.MainKt"
     }
 
-    // Exclude signature files to prevent SecurityException
     exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
 }
 
