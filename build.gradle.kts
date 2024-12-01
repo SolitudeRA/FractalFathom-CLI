@@ -67,18 +67,11 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("fr.inria.gforge.spoon:spoon-core:$spoonVersion")
     implementation("net.sourceforge.plantuml:plantuml:$plantUMLVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    implementation("org.neo4j:neo4j:$neo4jVersion"){
-        exclude(group = "org.eclipse.jetty", module = "jetty-http")
-        exclude(group = "io.netty", module = "netty-common")
-        exclude(group = "com.google.protobuf", module = "protobuf-java")
-    }
-
-    implementation("org.eclipse.jetty:jetty-http:12.0.15")
-    implementation("io.netty:netty-common:4.1.115.Final")
-    implementation("com.google.protobuf:protobuf-java:4.29.0")
+    implementation("org.neo4j:neo4j:$neo4jVersion")
 
     // Test dependencies
     testImplementation(platform("org.junit:junit-bom:$junitVersion"))

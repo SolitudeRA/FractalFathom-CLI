@@ -23,7 +23,7 @@ class AnnotationProcessor {
             when (annotation.name) {
                 "org.protogalaxy.fractalfathom.FractalFathomFeature" -> {
                     features.add(
-                        FeatureEntity(
+                        FeatureEntity.create(
                             name = annotation.attributes["name"] as? String ?: "Unnamed Feature",
                             description = annotation.attributes["description"] as? String,
                             type = FeatureType.valueOf(annotation.attributes["type"] as? String ?: "FUNCTIONAL")
@@ -32,7 +32,7 @@ class AnnotationProcessor {
                 }
                 "org.protogalaxy.fractalfathom.FractalFathomMapping" -> {
                     mappings.add(
-                        MappingEntity(
+                        MappingEntity.create(
                             toConcept = annotation.attributes["toConcept"] as? String ?: "Unnamed Mapping",
                             type = MappingType.valueOf(annotation.attributes["type"] as? String ?: "CONCEPT")
                         )

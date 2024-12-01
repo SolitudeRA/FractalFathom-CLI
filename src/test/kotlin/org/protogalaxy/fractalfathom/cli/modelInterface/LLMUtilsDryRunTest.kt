@@ -48,18 +48,16 @@ class LLMUtilsDryRunTest {
                 )
             ),
             features = listOf(
-                FeatureEntity(
+                FeatureEntity.create(
                     name = "TestFeature",
                     description = null,
-                    type = FeatureType.FUNCTIONAL,
-                    subFeatures = emptyList()
+                    type = FeatureType.FUNCTIONAL
                 )
             ),
             mappings = listOf(
-                MappingEntity(
+                MappingEntity.create(
                     toConcept = "BusinessLogic",
-                    type = MappingType.CONCEPT,
-                    subMappings = emptyList()
+                    type = MappingType.CONCEPT
                 )
             ),
             fields = listOf(

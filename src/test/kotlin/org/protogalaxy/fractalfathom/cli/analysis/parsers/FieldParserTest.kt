@@ -1,5 +1,7 @@
 package org.protogalaxy.fractalfathom.cli.analysis.parsers
 
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -10,7 +12,10 @@ import org.protogalaxy.fractalfathom.cli.analysis.annotation.MappingType
 class FieldParserTest : BaseTest() {
 
     private val logger = LoggerFactory.getLogger(FieldParserTest::class.java)
-    private val mapper = jacksonObjectMapper()
+    private val mapper = jacksonObjectMapper().apply{
+        registerModule(JavaTimeModule())
+        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+    }
 
     @Test
     fun testParseFields() {
