@@ -1,0 +1,45 @@
+{
+  "Assets" : [ {
+    "path" : "D:\\Codeing\\testProject\\testProjectFAXE",
+    "annotations" : [ ]
+  }, {
+    "path" : "D:\\Codeing\\testProject\\testProjectFAXE\\src",
+    "annotations" : [ ]
+  }, {
+    "path" : "D:\\Codeing\\testProject\\testProjectFAXE\\src\\auth",
+    "annotations" : [ ]
+  }, {
+    "path" : "D:\\Codeing\\testProject\\testProjectFAXE\\src\\auth\\AuthenticationModule.java",
+    "annotations" : [ "{ \"name\": \"Authentication\", \"start\":5, \"end\": 21}", "{ \"name\": \"AuthenticationConstructor\", \"start\":9, \"end\": 13}", "{ \"name\": \"AuthenticateUser\", \"start\":15, \"end\": 19}" ]
+  }, {
+    "path" : "D:\\Codeing\\testProject\\testProjectFAXE\\src\\Main.java",
+    "annotations" : [ ]
+  }, {
+    "path" : "D:\\Codeing\\testProject\\testProjectFAXE\\src\\permission",
+    "annotations" : [ ]
+  }, {
+    "path" : "D:\\Codeing\\testProject\\testProjectFAXE\\src\\permission\\PermissionModule.java",
+    "annotations" : [ "{ \"name\": \"PermissionManagement\", \"start\":8, \"end\": 36}", "{ \"name\": \"PermissionStorage\", \"start\":11, \"end\": 13}", "{ \"name\": \"GrantPermission\", \"start\":15, \"end\": 19}", "{ \"name\": \"RevokePermission\", \"start\":21, \"end\": 28}", "{ \"name\": \"CheckPermission\", \"start\":30, \"end\": 34}" ]
+  }, {
+    "path" : "D:\\Codeing\\testProject\\testProjectFAXE\\src\\user",
+    "annotations" : [ ]
+  }, {
+    "path" : "D:\\Codeing\\testProject\\testProjectFAXE\\src\\user\\User.java",
+    "annotations" : [ "{ \"name\": \"UserEntity\", \"start\":3, \"end\": 31}", "{ \"name\": \"UserID\", \"line\":6}", "{ \"name\": \"UserName\", \"line\":9}", "{ \"name\": \"UserConstructor\", \"start\":12, \"end\": 17}", "{ \"name\": \"GetUserID\", \"start\":19, \"end\": 23}", "{ \"name\": \"GetUserName\", \"start\":25, \"end\": 29}" ]
+  }, {
+    "path" : "D:\\Codeing\\testProject\\testProjectFAXE\\src\\user\\UserModule.java",
+    "annotations" : [ "{ \"name\": \"UserManagement\", \"start\":6, \"end\": 34}", "{ \"name\": \"UserStorage\", \"start\":9, \"end\": 11}", "{ \"name\": \"AddUser\", \"start\":13, \"end\": 17}", "{ \"name\": \"RemoveUser\", \"start\":19, \"end\": 23}", "{ \"name\": \"FindUserByID\", \"start\":25, \"end\": 32}" ]
+  }, {
+    "path" : "D:\\Codeing\\testProject\\testProjectFAXE\\src\\auth",
+    "annotations" : [ ]
+  }, {
+    "path" : "D:\\Codeing\\testProject\\testProjectFAXE\\src\\permission",
+    "annotations" : [ ]
+  }, {
+    "path" : "D:\\Codeing\\testProject\\testProjectFAXE\\src\\user",
+    "annotations" : [ ]
+  }, {
+    "path" : "D:\\Codeing\\testProject\\testProjectFAXE\\src",
+    "annotations" : [ ]
+  } ]
+}
