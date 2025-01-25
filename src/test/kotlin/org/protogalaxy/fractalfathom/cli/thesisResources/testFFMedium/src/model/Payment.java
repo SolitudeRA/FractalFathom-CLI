@@ -1,4 +1,4 @@
-package org.protogalaxy.fractalfathom.cli.thesisResources.testFFMedium.model;
+package org.protogalaxy.fractalfathom.cli.thesisResources.testFFMedium.src.model;
 
 import org.protogalaxy.fractalfathom.*;
 
@@ -8,6 +8,7 @@ public class Payment {
     private double amount;
     private String currency;
     private String paymentMethod;
+    private String transactionId;
 
     public Payment(double amount, String currency, String paymentMethod) {
         this.amount = amount;
@@ -25,5 +26,13 @@ public class Payment {
 
     public String getPaymentMethod() {
         return paymentMethod;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 }
