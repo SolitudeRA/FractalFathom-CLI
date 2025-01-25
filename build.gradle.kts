@@ -18,7 +18,7 @@ val jacksonVersion = "2.18.0"
 val spoonVersion = "11.1.0"
 val plantUMLVersion = "1.2024.7"
 val coroutinesVersion = "1.9.0"
-val neo4jVersion = "5.25.1"
+val neo4jVersion = "5.26"
 val junitVersion = "5.11.3"
 val mockkVersion = "1.13.13"
 
