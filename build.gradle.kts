@@ -13,6 +13,7 @@ repositories {
 }
 
 val kotlinVersion = "2.0.21"
+val neo4jVersion = "2025.02.0"
 val okhttpVersion = "4.12.0"
 val jacksonVersion = "2.18.0"
 val spoonVersion = "11.1.0"
@@ -66,6 +67,7 @@ dependencies {
     implementation(platform("com.squareup.okhttp3:okhttp-bom:$okhttpVersion"))
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    implementation("org.neo4j:neo4j:$neo4jVersion")
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation("fr.inria.gforge.spoon:spoon-core:$spoonVersion")
