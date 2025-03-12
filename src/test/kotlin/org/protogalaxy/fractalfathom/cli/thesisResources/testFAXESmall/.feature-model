@@ -1,0 +1,20 @@
+testPojectFAXE
+    Authentication
+        AuthenticationConstructor
+        AuthenticateUser
+    PermissionManagement
+        PermissionStorage
+        GrantPermission
+        RevokePermission
+        CheckPermission
+    UserManagement
+        UserStorage
+        AddUser
+        RemoveUser
+        FindUserByID
+    UserEntity
+        UserID
+        UserName
+        UserConstructor
+        GetUserID
+        GetUserName
